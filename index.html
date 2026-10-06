@@ -242,9 +242,15 @@ body.solta .hud{position:static;padding:18px 0 0}
     <div id="novoCodigo"></div>
     <div class="listacod" id="listaCodigos"></div>
   </details>
+  <details class="codigos">
+    <summary><h3>Quem já votou <span id="resumoVotos" class="resumo"></span></h3></summary>
+    <div class="log" id="log"></div>
+  </details>
+  <details class="codigos">
+    <summary><h3>Tentativas de fraude 🚨 <span id="resumoTent" class="resumo"></span></h3></summary>
+    <div class="listacod" id="listaTentativas"></div>
+  </details>
   <div id="resultados"></div>
-  <div class="codigos" style="margin-top:14px"><h3>Tentativas de fraude 🚨</h3><div class="listacod" id="listaTentativas"></div></div>
-  <div class="log" id="log"></div>
   <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
     <button class="btn" id="btnZerar">Zerar votação</button>
   </div>
@@ -550,7 +556,8 @@ function renderApuracao(){
     const h = new Date(v.t).toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
     const quem = v.eleitor ? `${esc(v.eleitor)} (código ${esc(v.titulo||"")})` + (v.uid ? ` · conta: <span data-uid="${esc(v.uid)}">…</span>` : "") : "sem código";
     return `<div>Voto ${ord.length-i} · ${h} · ${quem} · votou em <b>${esc(nomeVoto(v.voto))}</b><button data-rm="${esc(v.id)}">remover</button></div>`;
-  }).join("");
+  }).join("") || '<div style="color:var(--muted)">Ninguém votou ainda.</div>';
+  $("resumoVotos").textContent = `· ${total}`;
   const uids = [...new Set(votos.map(v=>v.uid).filter(Boolean))];
   if(usuario && uids.length){
     usuario.profiles(uids).then(ps=>{
@@ -562,6 +569,7 @@ function renderApuracao(){
 }
 function renderTentativas(){
   const lista = (dbTentativas || []).concat(tentativasLocais).sort((a,b)=>b.t-a.t);
+  $("resumoTent").textContent = `· ${lista.length}`;
   $("listaTentativas").innerHTML = lista.length ? lista.map(r=>{
     const h = new Date(r.t).toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
     const oque = r.tipo === "reabriu" ? "abriu a urna de novo depois de já ter votado" : r.tipo === "repetido" ? `tentou votar de novo com o código de <b>${esc(r.nomeCodigo||"")}</b> (${esc(r.codigo||"")})` : `chutou o código <b>${esc(r.codigo||"")}</b>`;
