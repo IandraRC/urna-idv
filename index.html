@@ -218,8 +218,7 @@ body.solta .hud{position:static;padding:18px 0 0}
 <div class="status" id="status">Carregando a urna…</div>
 <div class="barra-inferior">
   <button class="btn hidden" id="btnApur">Apurar votos</button>
-  <button class="btn" id="btnSom">Som: ligado</button>
-  <button class="btn" id="btnAdmin">Admin</button>
+  <button class="btn hidden" id="btnAdmin">Entrar como admin</button>
 </div>
 </div>
 
@@ -624,7 +623,6 @@ $("btnApur").addEventListener("click", ()=>{
   renderApuracao();
   if(abrir){ animarApuracao(); ap.scrollIntoView({behavior:"smooth", block:"start"}); }
 });
-$("btnSom").addEventListener("click", ()=>{ somLigado=!somLigado; $("btnSom").textContent = "Som: " + (somLigado?"ligado":"desligado"); });
 $("btnZerar").addEventListener("click", async ()=>{
   const bz = $("btnZerar");
   if(!confirmar(bz, "Clique de novo para apagar TODOS os votos")) return;
@@ -655,6 +653,9 @@ firebase.initializeApp({
 });
 db = firebase.firestore();
 const auth = firebase.auth();
+// botão de admin só aparece no endereço oculto .../#admin (ou se já estiver logado como admin)
+function mostrarAdmin(){ $("btnAdmin").classList.toggle("hidden", !(souDono || location.hash === "#admin")); }
+addEventListener("hashchange", mostrarAdmin); mostrarAdmin();
 $("btnAdmin").addEventListener("click", async ()=>{
   if(souDono){ await auth.signOut(); location.reload(); return; }
   try{ await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
@@ -675,7 +676,7 @@ async function iniciar(){
   if(souDono){
     $("bloqueio").classList.add("hidden");
     $("btnApur").classList.remove("hidden");
-    $("btnAdmin").textContent = "Sair do admin";
+    $("btnAdmin").textContent = "Sair do admin"; mostrarAdmin();
     status("");
     const fila = pendentes.slice();
     for(const r of fila){
