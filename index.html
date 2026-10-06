@@ -346,6 +346,30 @@ body.zoom .atalhos{opacity:0;pointer-events:none}
 .clipe{position:absolute;top:-18px;left:40px;width:26px;height:70px;border:4px solid #9aa0a6;border-radius:13px;border-bottom-color:transparent;z-index:2}
 .folha.vazia{aspect-ratio:210/297;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:40px;text-align:center;font:18px/1.5 "Courier New",monospace;color:#333}
 .folha.vazia h3{margin:0;font:bold 26px Arial,Helvetica,sans-serif;letter-spacing:.04em}
+/* plano de governo escrito em HTML (Lume) */
+.folha.doc{padding:0;font-family:Arial,Helvetica,sans-serif;color:#1d1d1d;text-align:left}
+.doc-capa{position:relative;background:linear-gradient(135deg,#d62828,#8f1111);color:#fff;padding:44px 40px 34px;overflow:hidden}
+.doc-capa::after{content:"18";position:absolute;right:-10px;bottom:-46px;font:900 190px/1 Arial,Helvetica,sans-serif;color:rgba(255,255,255,.12)}
+.doc-capa .doc-sel{font-size:12px;letter-spacing:.35em;font-weight:bold;opacity:.85}
+.doc-capa h2{margin:10px 0 4px;font:900 clamp(30px,5vw,46px)/1 Arial,Helvetica,sans-serif;letter-spacing:.02em}
+.doc-capa h3{margin:0;font:bold clamp(15px,2.2vw,20px)/1.2 Arial,Helvetica,sans-serif;letter-spacing:.12em;opacity:.95}
+.doc-capa .doc-slogan{margin-top:18px;font-size:clamp(15px,2vw,19px);font-style:italic;max-width:85%}
+.doc-corpo{padding:30px 40px 36px}
+.doc-rot{font-size:12px;letter-spacing:.3em;font-weight:bold;color:#b51c1c;margin-bottom:16px}
+.doc-eixo{display:grid;grid-template-columns:44px 1fr;gap:4px 14px;margin-bottom:22px}
+.doc-eixo .n{grid-row:span 2;width:44px;height:44px;border-radius:8px;background:#d62828;color:#fff;display:flex;align-items:center;justify-content:center;font:900 22px Arial,Helvetica,sans-serif}
+.doc-eixo h4{margin:2px 0 0;font:900 clamp(15px,2.1vw,19px)/1.2 Arial,Helvetica,sans-serif;text-transform:uppercase;letter-spacing:.02em}
+.doc-eixo ul{margin:6px 0 0;padding-left:18px;font-size:clamp(13px,1.7vw,15.5px);line-height:1.5;color:#333}
+.doc-eixo li{margin-bottom:3px}
+.doc-eixo li b{color:#b51c1c}
+.doc-lema{margin:26px 0 0;padding:18px 22px;border-left:6px solid #d62828;background:#fbeaea;font-size:clamp(15px,2vw,18px);font-style:italic;line-height:1.45}
+.doc-lema small{display:block;font-style:normal;font-weight:bold;letter-spacing:.25em;font-size:11px;color:#b51c1c;margin-bottom:6px}
+.doc-vote{margin-top:24px;text-align:center;padding:24px 20px;border-radius:12px;background:#1d1d1d;color:#fff}
+.doc-vote b{display:block;font:900 clamp(26px,4.4vw,40px)/1 Arial,Helvetica,sans-serif;color:#ff4d4d;letter-spacing:.06em}
+.doc-vote p{margin:12px 0 0;line-height:1.5;font-size:clamp(14px,1.8vw,16px)}
+.doc-rodape{margin-top:20px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;font-weight:900;color:#b51c1c;letter-spacing:.08em}
+.doc-rodape span{font-weight:bold;color:#555;letter-spacing:0}
+@media (max-width:760px){.doc-capa{padding:30px 22px 26px}.doc-corpo{padding:22px 18px 26px}.doc-capa::after{font-size:130px;bottom:-30px}}
 .carimbo{font:bold 34px/1 Arial,Helvetica,sans-serif;letter-spacing:.08em;color:#c1121f;border:5px solid #c1121f;border-radius:8px;padding:10px 18px;transform:rotate(-12deg);opacity:.85;margin-top:20px}
 .capa-pasta{position:absolute;inset:0 0 0 290px;z-index:3;border-radius:0 14px 14px 0;transform-origin:0 50%;backface-visibility:hidden;
   background:linear-gradient(225deg,#ecca88,#d4a95f);box-shadow:inset 0 0 0 1px rgba(0,0,0,.15);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;
@@ -1499,7 +1523,45 @@ async function iniciar(){
   const PROPOSTAS = {
     "10": {titulo:"Plano de Governo", pdf:"propostas/michel-10.pdf", paginas:["propostas/michel-10-p1.webp"]},
     "26": {titulo:"Novo Regime IDV — Manifesto 2026", pdf:"propostas/hugao-26.pdf",
-           paginas:[1,2,3,4].map(n=>"propostas/hugao-26-p" + n + ".webp")}
+           paginas:[1,2,3,4].map(n=>"propostas/hugao-26-p" + n + ".webp")},
+    "18": {titulo:"Por um Discord melhor", html:`
+      <div class="doc-capa">
+        <div class="doc-sel">PLANO DE GOVERNO · ELEIÇÕES IDV 2026</div>
+        <h2>LUME PRESIDENTE</h2>
+        <h3>POR UM DISCORD MELHOR</h3>
+        <div class="doc-slogan">“Democracia, campeonatos e menos preconceito.”</div>
+      </div>
+      <div class="doc-corpo">
+        <div class="doc-rot">COMPROMISSO DE CAMPANHA</div>
+        <div class="doc-eixo"><span class="n">1</span><h4>Um Discord menos preconceituoso</h4><ul>
+          <li>Tolerância zero com preconceito, racismo, homofobia e ataques gratuitos.</li>
+          <li>Respeito entre todos, independentemente de quem seja.</li>
+          <li>Liberdade para zoar, mas sem transformar a zoeira em perseguição.</li></ul></div>
+        <div class="doc-eixo"><span class="n">2</span><h4>Campeonatos com finais de verdade</h4><ul>
+          <li>Mais campeonatos dentro do servidor.</li>
+          <li>Torneios organizados, com chaveamento e regras claras.</li>
+          <li>E, principalmente: <b>FINAIS</b>.</li>
+          <li>Nada de campeonato acabar no meio porque ninguém sabe mais o que está acontecendo.</li>
+          <li>Premiações, rivalidades e direito ao tão esperado jogo decisivo.</li></ul></div>
+        <div class="doc-eixo"><span class="n">3</span><h4>Democracia acima de tudo</h4><ul>
+          <li>As decisões importantes serão colocadas para votação.</li>
+          <li>O povo escolhe os campeonatos, regras e eventos.</li>
+          <li>Menos decisões misteriosas tomadas pela elite do Discord.</li>
+          <li>A voz do membro será ouvida.</li></ul></div>
+        <div class="doc-eixo"><span class="n">4</span><h4>Uma nova política de lazer</h4><ul>
+          <li>Defesa de uma comunidade mais descontraída e sem moralismo.</li>
+          <li>Maconha liberada no âmbito das brincadeiras e do servidor, sem incentivar ou organizar compra, venda ou distribuição de drogas reais.</li>
+          <li>Mais diversão, menos estresse.</li></ul></div>
+        <div class="doc-eixo"><span class="n">5</span><h4>Mais eventos, menos tédio</h4><ul>
+          <li>Campeonatos de CS2.</li>
+          <li>Eventos aleatórios.</li>
+          <li>Desafios entre membros.</li>
+          <li>Noites temáticas.</li>
+          <li>E, principalmente, motivos para entrar no Discord e pensar: “Hoje vai ter alguma coisa acontecendo.”</li></ul></div>
+        <div class="doc-lema"><small>NOSSO LEMA</small>“Se é para administrar o Discord, que seja com democracia, campeonato até a final e respeito para todo mundo.”</div>
+        <div class="doc-vote"><b>VOTE LUME</b><p>Por um Discord onde ninguém seja excluído,<br>todo campeonato tenha uma final<br>e a democracia não seja só um emoji de enquete.</p></div>
+        <div class="doc-rodape">LUME 2026 <span>O servidor é do povo.</span></div>
+      </div>`}
   };
   const cands = window.CANDIDATOS || {};
   const esc = t => String(t).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -1515,8 +1577,12 @@ async function iniciar(){
     const c = cands[k] || {nome:k}, pr = PROPOSTAS[k];
     let h = `<div class="folhas-topo"><span>${k} · ${esc(c.nome)}</span>`;
     if(pr){
-      h += `<a href="${pr.pdf}" target="_blank" rel="noopener">Abrir PDF ↗</a></div>`;
-      h += pr.paginas.map((src, i)=>`<div class="folha">${i ? "" : '<span class="clipe"></span>'}<img src="${src}" alt="${esc(pr.titulo)} — página ${i+1}" loading="lazy"></div>`).join("");
+      if(pr.html){
+        h += `</div><div class="folha doc"><span class="clipe"></span>${pr.html}</div>`;
+      } else {
+        h += `<a href="${pr.pdf}" target="_blank" rel="noopener">Abrir PDF ↗</a></div>`;
+        h += pr.paginas.map((src, i)=>`<div class="folha">${i ? "" : '<span class="clipe"></span>'}<img src="${src}" alt="${esc(pr.titulo)} — página ${i+1}" loading="lazy"></div>`).join("");
+      }
     } else {
       h += `</div><div class="folha vazia"><span class="clipe"></span><h3>PLANO DE GOVERNO</h3>` +
            `<div>Candidato: <b>${esc(c.nome)}</b> — nº ${k}</div><div>Nenhuma proposta foi entregue<br>até o momento.</div>` +
