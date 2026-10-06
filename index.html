@@ -13,21 +13,40 @@
 }}
 :root[data-theme="dark"]{--page:#1d1c19;--body:#2b2925;--body-edge:#45413a;--panel:#26241f;--panel-ink:#eee;--line:#444;--muted:#aaa;--bar:#41b964;}
 *{box-sizing:border-box}
-body{margin:0;background:var(--page);font-family:Arial,Helvetica,sans-serif;color:var(--panel-ink);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px}
-.urna{background:var(--body);border:2px solid var(--body-edge);border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.25);padding:18px;display:flex;gap:18px;width:100%;max-width:980px}
-.tela{flex:1.7;background:var(--screen);color:var(--screen-ink);border:10px solid #3a3a36;border-radius:6px;min-height:420px;position:relative;display:flex;flex-direction:column;padding:18px 20px;font-family:Arial,Helvetica,sans-serif}
-.lado{flex:1;display:flex;flex-direction:column;gap:12px;min-width:240px}
-.selo{display:flex;align-items:center;gap:10px;justify-content:center;color:#2b2b2b;font-weight:bold;letter-spacing:.06em;font-size:15px;padding:6px 0}
+body{margin:0;background:#1d1b18;font-family:Arial,Helvetica,sans-serif;color:var(--panel-ink);height:100vh;height:100dvh;overflow:hidden}
+.urna{position:relative;width:100%;max-width:1000px;display:flex;gap:22px;padding:26px 26px 40px;border-radius:16px 16px 10px 10px;
+  background:linear-gradient(180deg,#f3f3ef 0%,#e6e6e1 55%,#d8d8d2 100%);
+  border:1px solid #bdbdb5;box-shadow:inset 0 2px 0 #fff,inset 0 -3px 0 #c4c4bc,0 18px 30px -10px rgba(0,0,0,.35),0 4px 10px rgba(0,0,0,.15)}
+/* frisos da borda frontal */
+.urna::after{content:"";position:absolute;left:18px;right:18px;bottom:10px;height:12px;border-radius:3px;
+  background:repeating-linear-gradient(90deg,transparent 0 46px,#b9b9b1 46px 48px,#fafaf6 48px 50px),linear-gradient(180deg,#dcdcd6,#cfcfc8);
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.18)}
+.tela{flex:1.7;background:linear-gradient(160deg,#f2f4ef 0%,#e8ebe5 60%,#dfe2dc 100%);color:var(--screen-ink);
+  border:14px solid #cfcfc8;border-radius:4px;outline:1px solid #a9a9a1;
+  box-shadow:inset 0 0 0 2px #8f918b,inset 0 3px 14px rgba(0,0,0,.18),0 0 0 3px #e9e9e3,0 1px 0 4px #b9b9b1;
+  min-height:430px;position:relative;display:flex;flex-direction:column;padding:16px 20px;font-family:Arial,Helvetica,sans-serif}
+.lado{flex:1;display:flex;flex-direction:column;gap:14px;min-width:250px;max-width:330px}
+.selo{display:flex;align-items:center;gap:12px;justify-content:center;padding:10px 12px;border-radius:4px;
+  background:linear-gradient(180deg,#f7f7f4,#dcdcd6);border:1px solid #b3b3ab;box-shadow:inset 0 1px 0 #fff,0 1px 2px rgba(0,0,0,.15)}
 .selo svg{flex:none}
-.teclado{background:#2c2c2a;border-radius:8px;padding:16px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.tecla{background:var(--key);color:var(--key-ink);border:none;border-radius:5px;font-size:28px;font-weight:bold;height:56px;cursor:pointer;box-shadow:0 4px 0 #000;font-family:inherit}
-.tecla:active,.tecla.press{transform:translateY(3px);box-shadow:0 1px 0 #000}
+.selo .je{font:bold 21px/1.05 Arial,Helvetica,sans-serif;letter-spacing:.07em;color:#1e1e1e;text-align:center}
+.selo .je small{display:block;font-size:10px;letter-spacing:.3em;color:#555;margin-top:3px}
+.teclado{background:linear-gradient(180deg,#45474a,#2f3033);border-radius:6px;padding:16px 18px 18px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px 14px;
+  box-shadow:inset 0 2px 6px rgba(0,0,0,.55),0 1px 0 #fff;border:1px solid #232426}
+.tecla{position:relative;background:linear-gradient(180deg,#3a3b3e 0%,#1d1e20 70%,#151617 100%);color:#f4f4f4;border:1px solid #0d0d0e;border-radius:5px;
+  font:bold 30px/1 Arial,Helvetica,sans-serif;height:58px;cursor:pointer;font-style:italic;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 5px 0 #0b0b0c,0 7px 6px rgba(0,0,0,.45);padding:0 0 4px}
+.tecla:active,.tecla.press{transform:translateY(4px);box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 1px 0 #0b0b0c,0 2px 3px rgba(0,0,0,.4)}
 .tecla.zero{grid-column:2}
-.acoes{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px}
-.acao{border:none;border-radius:5px;height:58px;font-weight:bold;font-size:13px;cursor:pointer;box-shadow:0 4px 0 rgba(0,0,0,.6);font-family:inherit}
-.acao:active,.acao.press{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.6)}
-.branco{background:var(--branco);color:#111}.corrige{background:var(--corrige);color:#111}.confirma{background:var(--confirma);color:#111;height:68px;font-size:14px;margin-top:-10px}
-.acoes{align-items:end}
+.br{position:absolute;right:6px;bottom:3px;font-size:13px;font-style:normal;font-weight:normal;opacity:.55;line-height:1;letter-spacing:0}
+.acao .br{position:static;display:block;margin-top:3px;font-size:12px;opacity:.6}
+.acoes{display:grid;grid-template-columns:1fr 1fr 1.15fr;gap:12px;align-items:end;padding:4px 4px 0}
+.acao{border:1px solid rgba(0,0,0,.35);border-radius:5px;height:56px;font:bold 14px/1 Arial,Helvetica,sans-serif;cursor:pointer;padding:0 2px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 5px 0 rgba(0,0,0,.45),0 7px 6px rgba(0,0,0,.3)}
+.acao:active,.acao.press{transform:translateY(4px);box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 1px 0 rgba(0,0,0,.45)}
+.branco{background:linear-gradient(180deg,#fff,#e6e6e3);color:#111}
+.corrige{background:linear-gradient(180deg,#ff7a3d,#e2481a);color:#111}
+.confirma{background:linear-gradient(180deg,#5cc865,#2e9d3d);color:#111;height:70px;font-size:15px}
 /* tela */
 .topo{font-size:15px;font-weight:bold}
 .cargo{text-align:center;font-size:26px;font-weight:bold;margin:14px 0 18px;letter-spacing:.02em}
@@ -56,11 +75,11 @@ body{margin:0;background:var(--page);font-family:Arial,Helvetica,sans-serif;colo
 .zoeira .zdica{margin-top:22px;font-size:14px;font-weight:normal;color:#555}
 .hidden{display:none!important}
 /* apuração */
-.status{margin-top:14px;font-size:15px;text-align:center;max-width:620px;color:var(--panel-ink)}
+.status{font-size:14px;text-align:center;max-width:620px;color:#fff;background:rgba(20,18,15,.72);padding:6px 14px;border-radius:999px;backdrop-filter:blur(6px)}
 .status:empty{display:none}
-.barra-inferior{margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.barra-inferior{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
 .btn{background:var(--panel);color:var(--panel-ink);border:1px solid var(--line);border-radius:8px;padding:8px 14px;font-size:14px;cursor:pointer;font-family:inherit}
-.apuracao{width:100%;max-width:980px;background:var(--panel);color:var(--panel-ink);border:1px solid var(--line);border-radius:12px;padding:18px;margin-top:14px}
+.apuracao{position:fixed;z-index:15;left:50%;transform:translateX(-50%);top:16px;bottom:110px;width:calc(100% - 32px);max-width:980px;overflow:auto;background:var(--panel);color:var(--panel-ink);border:1px solid var(--line);border-radius:12px;padding:18px;box-shadow:0 20px 50px rgba(0,0,0,.5)}
 .apuracao h2{margin:0 0 4px;font-size:20px}
 .apuracao .sub{color:var(--muted);font-size:13px;margin-bottom:14px}
 .res{display:grid;grid-template-columns:52px 1fr auto;gap:10px;align-items:center;margin-bottom:10px}
@@ -96,16 +115,43 @@ body{margin:0;background:var(--page);font-family:Arial,Helvetica,sans-serif;colo
 .listacod button{margin-left:8px;font-size:12px;padding:2px 8px;border-radius:6px;border:1px solid var(--line);background:transparent;color:var(--panel-ink);cursor:pointer}
 .log{max-height:220px;overflow:auto;font-size:13px;border-top:1px solid var(--line);margin-top:12px;padding-top:8px}
 .log div{padding:3px 0;border-bottom:1px dashed var(--line)}
-@media (max-width:760px){
-  .urna{flex-direction:column;padding:12px}
-  .tela{min-height:360px;padding:12px;border-width:7px}
-  .foto,.foto img{width:84px}.foto img{height:105px}.foto.vice,.foto.vice img{width:56px}.foto.vice img{height:70px}.foto.vice{font-size:9px}.fotos{gap:6px}.meio{gap:8px}
-  .cargo{font-size:20px}.info{font-size:15px}.dig{width:32px;height:42px;font-size:26px}
-  .fim{font-size:80px}
-}
+/* urna solta (telas estreitas, dentro da cabine) */
+body.solta .urna{flex-direction:column;padding:14px 14px 34px;gap:16px;width:100%;max-width:520px;margin:0 auto}
+body.solta .lado{max-width:none;min-width:0}
+body.solta .tela{min-height:320px;padding:12px;border-width:8px}
+body.solta .foto,body.solta .foto img{width:84px}body.solta .foto img{height:105px}body.solta .foto.vice,body.solta .foto.vice img{width:56px}body.solta .foto.vice img{height:70px}body.solta .foto.vice{font-size:9px}body.solta .fotos{gap:6px}body.solta .meio{gap:8px}
+body.solta .cargo{font-size:20px}body.solta .info{font-size:15px}body.solta .dig{width:32px;height:42px;font-size:26px}
+body.solta .fim{font-size:80px}
+/* cena imersiva */
+.cena{position:fixed;inset:0;overflow:hidden;cursor:zoom-in}
+body.zoom .cena{cursor:default}
+.mundo{position:absolute;left:0;top:0;transform-origin:0 0;transition:transform 1.3s cubic-bezier(.6,0,.2,1);will-change:transform}
+.mundo .bg{position:absolute;inset:0;background:url(sala.webp) 0 0/100% 100% no-repeat;transition:filter 1.3s}
+body.zoom .mundo .bg{filter:blur(.7px) brightness(.82) saturate(.9)}
+.slot{position:absolute}
+.slot::before{content:"";position:absolute;left:-2%;right:-2%;bottom:-6%;height:14%;border-radius:50%;background:radial-gradient(ellipse at center,rgba(0,0,0,.35),transparent 70%)}
+.slot .urna{position:absolute;left:0;top:0;width:1000px;max-width:none;transform-origin:0 0;pointer-events:none}
+body.zoom:not(.solta) .slot .urna{pointer-events:auto}
+.vinheta{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 70% 65% at 50% 45%,transparent 45%,rgba(0,0,0,.6));opacity:.35;transition:opacity 1.3s}
+body.zoom .vinheta{opacity:1}
+.dica{position:fixed;left:50%;bottom:108px;transform:translateX(-50%);z-index:5;background:rgba(20,18,15,.78);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:10px 18px;font:bold 15px Arial,Helvetica,sans-serif;cursor:pointer;white-space:nowrap;animation:chama 1.8s ease-in-out infinite;transition:opacity .4s}
+@keyframes chama{50%{transform:translateX(-50%) scale(1.06)}}
+body.zoom .dica{opacity:0;pointer-events:none}
+.sair{position:fixed;top:14px;left:14px;z-index:12;background:rgba(20,18,15,.72);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:8px 14px;font:14px Arial,Helvetica,sans-serif;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .4s}
+body.zoom .sair{opacity:1;pointer-events:auto}
+.palco{position:fixed;inset:0;z-index:10;overflow:auto;padding:62px 10px 24px;display:none}
+body.solta .palco{display:block;animation:surge .35s ease-out}
+@keyframes surge{from{opacity:0;transform:scale(.97)}}
+.hud{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px 16px calc(14px + env(safe-area-inset-bottom,0px));pointer-events:none}
+.hud>*{pointer-events:auto}
+body.solta .hud{position:static;padding:18px 0 0}
+@media (prefers-reduced-motion:reduce){.mundo,.mundo .bg,.vinheta{transition:none}.dica{animation:none}}
 </style>
 
-<div class="urna">
+<div class="cena" id="cena">
+<div class="mundo" id="mundo"><div class="bg"></div>
+<div class="slot" id="slot">
+<div class="urna" id="urna">
   <div class="tela" id="tela">
     <div id="vInicio">
       <div class="topo">SEU VOTO PARA</div>
@@ -139,28 +185,42 @@ body{margin:0;background:var(--page);font-family:Arial,Helvetica,sans-serif;colo
 
   <div class="lado">
     <div class="selo">
-      <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="15" fill="none" stroke="#2b2b2b" stroke-width="2"/><path d="M9 20h16M11 20l-2-7 8-4 8 4-2 7M17 9v-3" stroke="#2b2b2b" stroke-width="2" fill="none"/></svg>
-      JUSTIÇA ELEITORAL IDV
+      <svg width="46" height="46" viewBox="0 0 46 46" aria-hidden="true">
+        <circle cx="23" cy="23" r="21" fill="#e9e9e4" stroke="#3a3a3a" stroke-width="1.5"/>
+        <circle cx="23" cy="23" r="16" fill="none" stroke="#3a3a3a" stroke-width="1" stroke-dasharray="1.5 2"/>
+        <path d="M23 9l3.2 6.6 7.2 1-5.2 5 1.3 7.2L23 25.4l-6.5 3.4 1.3-7.2-5.2-5 7.2-1z" fill="#3a3a3a"/>
+        <circle cx="23" cy="20" r="3.4" fill="#e9e9e4"/>
+        <path d="M12 33c4 3 7 4 11 4s7-1 11-4" fill="none" stroke="#3a3a3a" stroke-width="1.6"/>
+      </svg>
+      <div class="je">JUSTIÇA<br>ELEITORAL<small>IDV</small></div>
     </div>
     <div class="teclado" id="teclado">
-      <button class="tecla" data-k="1">1</button><button class="tecla" data-k="2">2</button><button class="tecla" data-k="3">3</button>
-      <button class="tecla" data-k="4">4</button><button class="tecla" data-k="5">5</button><button class="tecla" data-k="6">6</button>
-      <button class="tecla" data-k="7">7</button><button class="tecla" data-k="8">8</button><button class="tecla" data-k="9">9</button>
-      <button class="tecla zero" data-k="0">0</button>
-      <div class="acoes">
-        <button class="acao branco" data-k="B">BRANCO</button>
-        <button class="acao corrige" data-k="C">CORRIGE</button>
-        <button class="acao confirma" data-k="OK">CONFIRMA</button>
-      </div>
+      <button class="tecla" data-k="1" aria-label="1">1<span class="br" aria-hidden="true">⠁</span></button><button class="tecla" data-k="2" aria-label="2">2<span class="br" aria-hidden="true">⠃</span></button><button class="tecla" data-k="3" aria-label="3">3<span class="br" aria-hidden="true">⠉</span></button>
+      <button class="tecla" data-k="4" aria-label="4">4<span class="br" aria-hidden="true">⠙</span></button><button class="tecla" data-k="5" aria-label="5">5<span class="br" aria-hidden="true">⠑</span></button><button class="tecla" data-k="6" aria-label="6">6<span class="br" aria-hidden="true">⠋</span></button>
+      <button class="tecla" data-k="7" aria-label="7">7<span class="br" aria-hidden="true">⠛</span></button><button class="tecla" data-k="8" aria-label="8">8<span class="br" aria-hidden="true">⠓</span></button><button class="tecla" data-k="9" aria-label="9">9<span class="br" aria-hidden="true">⠊</span></button>
+      <button class="tecla zero" data-k="0" aria-label="0">0<span class="br" aria-hidden="true">⠚</span></button>
+    </div>
+    <div class="acoes">
+      <button class="acao branco" data-k="B">BRANCO<span class="br" aria-hidden="true">⠃⠗⠁⠝⠉⠕</span></button>
+      <button class="acao corrige" data-k="C">CORRIGE<span class="br" aria-hidden="true">⠉⠕⠗⠗⠊⠛⠑</span></button>
+      <button class="acao confirma" data-k="OK">CONFIRMA<span class="br" aria-hidden="true">⠉⠕⠝⠋⠊⠗⠍⠁</span></button>
     </div>
   </div>
 </div>
+</div></div>
+<div class="vinheta"></div>
+</div>
+<div class="palco" id="palco"></div>
+<button class="dica" id="dica">🗳️ Entre na cabine para votar</button>
+<button class="sair" id="sair">← Ver a sala</button>
 
+<div class="hud">
 <div class="status" id="status">Carregando a urna…</div>
 <div class="barra-inferior">
   <button class="btn hidden" id="btnApur">Apurar votos</button>
   <button class="btn" id="btnSom">Som: ligado</button>
   <button class="btn" id="btnAdmin">Admin</button>
+</div>
 </div>
 
 <div class="apuracao hidden" id="apuracao">
@@ -640,6 +700,81 @@ async function iniciar(){
     pronto = true;
   }
 }
+})();
+</script>
+
+<script>
+// ---------- cena: sala de aula com a urna na cabine ----------
+(function(){
+  const IMG = {w:1024, h:582};          // tamanho da foto sala.webp
+  const U = {x:449, b:411, w:129};      // onde fica a urna na foto (px da imagem)
+  const BOOTH_W = 190;                  // largura da cabine na foto
+  const DUR = 1300;
+  const cena = document.getElementById("cena"), mundo = document.getElementById("mundo"),
+        slot = document.getElementById("slot"), urna = document.getElementById("urna"),
+        palco = document.getElementById("palco"), hud = document.querySelector(".hud");
+  let zoom = false, solta = false, timer = null;
+
+  function medidas(){
+    const vw = innerWidth, vh = innerHeight;
+    const s = Math.max(vw/IMG.w, vh/IMG.h);
+    const k = U.w*s/1000;
+    const uh = (solta ? slot._uh : urna.offsetHeight) || 500;
+    const fit = f => Math.min(vw*f, (vh-130)*1000/uh, 1000);
+    let D = fit(0.66);                 // de perto, mas com as paredes da cabine aparecendo
+    if(D < 620) D = fit(0.94);         // tela menor: a urna ocupa quase tudo
+    return {vw, vh, s, k, uh, D, estreita: D < 620};
+  }
+  function layout(){
+    const m = medidas();
+    mundo.style.width = IMG.w*m.s + "px"; mundo.style.height = IMG.h*m.s + "px";
+    if(!solta){ slot._uh = m.uh; urna.style.transform = "scale(" + m.k + ")"; }
+    const sh = m.uh*m.k;
+    slot.style.left = U.x*m.s + "px"; slot.style.top = (U.b*m.s - sh) + "px";
+    slot.style.width = U.w*m.s + "px"; slot.style.height = sh + "px";
+    let Z = 1, tx = (m.vw - IMG.w*m.s)/2, ty = (m.vh - IMG.h*m.s)/2;
+    if(zoom){
+      Z = m.estreita ? m.vw*1.15/(BOOTH_W*m.s) : m.D/(1000*m.k);
+      const cx = (U.x + U.w/2)*m.s, cy = U.b*m.s - sh/2;
+      tx = m.vw/2 - Z*cx; ty = (m.vh - 70)/2 - Z*cy;
+    }
+    mundo.style.transform = "translate(" + tx + "px," + ty + "px) scale(" + Z + ")";
+    return m;
+  }
+  function soltar(on){
+    if(on === solta) return;
+    solta = on;
+    if(on){ palco.appendChild(urna); palco.appendChild(hud); urna.style.transform = ""; }
+    else { slot.appendChild(urna); document.body.appendChild(hud); }
+    document.body.classList.toggle("solta", on);
+    layout();
+  }
+  function entrar(){
+    if(zoom) return;
+    zoom = true; document.body.classList.add("zoom");
+    const m = layout();
+    clearTimeout(timer);
+    if(m.estreita) timer = setTimeout(()=>{ if(zoom) soltar(true); }, DUR*0.85);
+  }
+  function sair(){
+    if(!zoom) return;
+    clearTimeout(timer); soltar(false);
+    zoom = false; document.body.classList.remove("zoom"); layout();
+  }
+  cena.addEventListener("click", entrar);
+  document.getElementById("dica").addEventListener("click", entrar);
+  document.getElementById("sair").addEventListener("click", sair);
+  document.addEventListener("keydown", e=>{
+    if(e.target.closest && e.target.closest("input,textarea")) return;
+    if(e.key === "Escape") return sair();
+    if(!zoom && !e.ctrlKey && !e.metaKey && !e.altKey) entrar();
+  }, true);
+  addEventListener("resize", ()=>{
+    const m = medidas();
+    if(zoom && solta !== m.estreita) soltar(m.estreita); else layout();
+  });
+  new ResizeObserver(()=>{ if(!solta) layout(); }).observe(urna);
+  mundo.style.transition = "none"; layout(); mundo.offsetHeight; mundo.style.transition = "";
 })();
 </script>
 
