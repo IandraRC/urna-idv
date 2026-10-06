@@ -220,7 +220,17 @@ body.zoom .tvslot:hover .tv-corpo{box-shadow:inset 0 3px 0 rgba(255,255,255,.18)
 .tv-play{position:absolute;left:50%;top:50%;z-index:5;width:150px;height:150px;margin:-75px 0 0 -75px;border-radius:50%;border:5px solid rgba(255,255,255,.9);
   background:rgba(0,0,0,.45);color:#fff;font-size:64px;line-height:1;padding-left:12px;cursor:pointer;box-shadow:0 0 30px rgba(255,255,255,.35);transition:transform .15s,opacity .3s}
 .tv-play:hover{transform:scale(1.08)}
-.tv.tocando .tv-play{opacity:0;pointer-events:none}
+.tv.tocando .tv-play,.tv.acabou .tv-play{opacity:0;pointer-events:none}
+.tv-fim{position:absolute;inset:0;z-index:6;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:30px;text-align:center;
+  background:radial-gradient(ellipse at center,#1d2a4a,#05070d 75%);color:#fff;opacity:0;pointer-events:none;transition:opacity .6s}
+.tv.acabou .tv-fim{opacity:1;pointer-events:auto}
+.tv-fim p{margin:0;font:bold 30px/1.2 Arial,Helvetica,sans-serif;letter-spacing:.04em;text-shadow:0 0 12px rgba(120,170,255,.6)}
+.tv-fim a{display:inline-flex;align-items:center;gap:12px;background:#ff0033;color:#fff;text-decoration:none;border-radius:12px;padding:14px 22px;
+  font:bold 24px Arial,Helvetica,sans-serif;box-shadow:0 0 24px rgba(255,0,51,.55);transition:transform .15s}
+.tv-fim a:hover{transform:scale(1.05)}
+.tv-fim a{flex-direction:column;gap:6px;padding:14px 26px}
+.tv-fim a span{font-size:17px;opacity:.92;font-weight:normal;white-space:nowrap}
+.tv-fim button{background:none;border:2px solid rgba(255,255,255,.6);color:#fff;border-radius:999px;padding:8px 18px;font:bold 18px Arial,Helvetica,sans-serif;cursor:pointer}
 .tv:not(.tocando) .tv-tela video{filter:brightness(.55)}
 .tv-painel{width:118px;display:flex;flex-direction:column;align-items:center;gap:22px;padding:14px 0;border-radius:14px;background:linear-gradient(180deg,#d8d8d2,#a9a9a2);box-shadow:inset 0 2px 0 #fff,inset 0 -3px 0 rgba(0,0,0,.25)}
 .knob{width:70px;height:70px;border-radius:50%;background:conic-gradient(from 20deg,#2a2a2a,#555,#222,#4b4b4b,#2a2a2a);box-shadow:0 5px 0 #111,0 7px 8px rgba(0,0,0,.5),inset 0 0 0 7px #1c1c1c;position:relative}
@@ -382,6 +392,11 @@ body.solta .hud{position:static;padding:18px 0 0}
       <canvas id="tvRuido" width="160" height="120"></canvas>
       <div class="tv-msg">SEM SINAL</div>
       <button class="tv-play" id="tvPlay" aria-label="Reproduzir vídeo">▶</button>
+      <div class="tv-fim" id="tvFim">
+        <p>ASSISTA O DEBATE<br>COMPLETO AQUI:</p>
+        <a href="https://www.youtube.com/watch?v=ZyjiJuyyIpE" target="_blank" rel="noopener">▶ YouTube <span>youtube.com/watch?v=ZyjiJuyyIpE</span></a>
+        <button id="tvDeNovo">↻ Ver de novo</button>
+      </div>
     </div></div>
     <div class="tv-painel"><div class="knob"></div><div class="knob k2"></div><div class="grade"></div><div class="led"></div></div>
   </div>
@@ -1191,15 +1206,16 @@ async function iniciar(){
   }
   video.addEventListener("error", ()=>{ temVideo = false; if(alvo === "tv") ligarTv(true); });
   video.addEventListener("loadedmetadata", ()=>{ temVideo = true; });
-  video.addEventListener("play", ()=>{ tv.classList.add("tocando"); tv.classList.remove("sem-sinal"); setChuvisco(false); });
+  video.addEventListener("play", ()=>{ tv.classList.add("tocando"); tv.classList.remove("acabou"); tv.classList.remove("sem-sinal"); setChuvisco(false); });
   video.addEventListener("pause", ()=>tv.classList.remove("tocando"));
-  video.addEventListener("ended", ()=>{ tv.classList.remove("tocando"); play.textContent = "↻"; });
+  video.addEventListener("ended", ()=>{ tv.classList.remove("tocando"); tv.classList.add("acabou"); });
+  $("tvFim").addEventListener("click", e=>e.stopPropagation());
+  $("tvDeNovo").addEventListener("click", ()=>{ video.currentTime = 0; video.play(); });
   video.src = VIDEO_SRC;
   play.addEventListener("click", e=>{
     e.stopPropagation();
     if(alvo !== "tv") return entrar("tv");
     if(temVideo === false){ setChuvisco(true); tv.classList.add("sem-sinal"); return; }
-    play.textContent = "▶";
     video.play().catch(()=>{ tv.classList.add("sem-sinal"); setChuvisco(true); });
   });
   video.addEventListener("click", e=>{ e.stopPropagation(); if(alvo === "tv" && !video.paused) video.pause(); });
