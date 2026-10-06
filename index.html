@@ -151,6 +151,14 @@ body{margin:0;background:#1d1b18;font-family:Arial,Helvetica,sans-serif;color:va
 .tl-final .tl-venc{font-size:clamp(40px,7vw,110px);font-weight:900;line-height:1;animation:entra 1s .4s cubic-bezier(.3,1.6,.5,1) both}
 .tl-final .tl-placarfim{margin-top:2vh;font-size:clamp(16px,2vw,26px);opacity:.9;animation:entra 1s .7s both}
 .tl-final .tl-ctrl{margin-top:4vh}
+/* linha de 50% nas barras e tela de segundo turno */
+.tl-barra{position:relative;overflow:visible}
+.tl-barra i{position:relative;z-index:1}
+.tl-barra::after{content:"50%";position:absolute;left:50%;top:-6px;bottom:-6px;z-index:2;border-left:2px dashed rgba(245,211,59,.75);
+  font-size:11px;font-weight:bold;color:rgba(245,211,59,.9);padding-left:4px;line-height:1;pointer-events:none}
+.tl-final .tl-fotos{align-items:center}
+.tl-vs{font-size:clamp(40px,7vw,110px);font-weight:900;color:#f5d33b;text-shadow:0 0 30px rgba(245,211,59,.6);animation:entra 1s .3s cubic-bezier(.3,1.6,.5,1) both}
+.tl-final .tl-eleito small{display:block;font-size:.5em;letter-spacing:.1em;color:#fff;opacity:.85;margin-top:6px}
 /* abertura da apuração: fraudes, quem não votou, brancos e nulos */
 .tl-etapa{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;padding:5vh 4vw 9vh;text-align:center;
   background:radial-gradient(ellipse at 50% -10%,#24407a 0%,#0c1530 55%,#05080f 100%)}
@@ -1060,22 +1068,35 @@ function tlFim(){
   const ks = Object.keys(CANDIDATOS), max = Math.max(...ks.map(k=>TL.cont[k])), topo = ks.filter(k=>TL.cont[k]===max);
   const validos = ks.reduce((s,k)=>s+TL.cont[k],0);
   const placar = ks.slice().sort((a,b)=>TL.cont[b]-TL.cont[a]).map(k=>`${esc(CANDIDATOS[k].nome)} <b>${TL.cont[k]}</b>`).join(" · ") + ` · Brancos <b>${TL.cont.BRANCO}</b> · Nulos <b>${TL.cont.NULO}</b>`;
-  const empate = max === 0 || topo.length > 1;
+  // eleito no 1º turno só com MAIS de 50% dos votos válidos (brancos e nulos não contam)
+  const pct = k => (TL.cont[k]*100/validos).toFixed(1).replace(".",",") + "%";
+  const eleito = max > 0 && topo.length === 1 && max*2 > validos;
+  let finalistas = [];
+  if(max > 0 && !eleito){
+    if(topo.length >= 2) finalistas = topo;
+    else { const seg = Math.max(...ks.filter(k=>k !== topo[0]).map(k=>TL.cont[k])); finalistas = topo.concat(ks.filter(k=>k !== topo[0] && TL.cont[k] === seg && seg > 0)); }
+  }
+  const empate = !eleito;   // sem festa de vencedor: 2º turno ou nenhum voto
+  const fotos = (eleito ? topo : finalistas).map(k=>`<img src="${CANDIDATOS[k].foto}" alt="">`).join('<div class="tl-vs">×</div>');
   $("tlFinal").innerHTML = `
-    <div class="tl-eleito">${max === 0 ? "NENHUM VOTO VÁLIDO" : empate ? "⚖️ EMPATE! ⚖️" : "🏆 ELEITO 🏆"}</div>
-    <div class="tl-fotos">${(max===0?[]:topo).map(k=>`<img src="${CANDIDATOS[k].foto}" alt="">`).join("")}</div>
-    <div class="tl-venc">${max===0 ? "" : topo.map(k=>esc(CANDIDATOS[k].nome)).join(" &amp; ")}</div>
-    <div class="tl-placarfim">${max===0 ? "" : `${max} votos · ${(max*100/validos).toFixed(1).replace(".",",")}% dos válidos<br>`}${placar}</div>
+    <div class="tl-eleito">${max === 0 ? "NENHUM VOTO VÁLIDO" : eleito ? "🏆 ELEITO NO 1º TURNO 🏆" : "🗳️ VAI TER SEGUNDO TURNO! 🗳️"}${max > 0 && !eleito && finalistas.length > 2 ? "<small>empate na disputa pelas vagas</small>" : ""}</div>
+    <div class="tl-fotos">${max === 0 ? "" : fotos}</div>
+    <div class="tl-venc">${max === 0 ? "" : eleito ? esc(CANDIDATOS[topo[0]].nome) : finalistas.map(k=>esc(CANDIDATOS[k].nome)).join(" × ")}</div>
+    <div class="tl-placarfim">${max === 0 ? "" : eleito
+      ? `${max} votos · ${pct(topo[0])} dos válidos (mais da metade)<br>`
+      : `Ninguém passou de 50% dos votos válidos · ${finalistas.map(k=>`${esc(CANDIDATOS[k].nome)} ${pct(k)}`).join(" · ")}<br>`}${placar}</div>
     <div class="tl-ctrl"><button data-tl="grafico">📊 Quem votou em quem</button><button data-tl="rever">↺ Ver de novo</button><button data-tl="fechar">✕ Fechar</button></div>`;
   const seq = TL.seq;
   const revelar = ()=>{
     if(seq !== TL.seq) return;
     $("tlSuspense").classList.add("hidden");
     $("tlFinal").classList.remove("hidden");
-    if(!empate){ fanfarra(); confete(topo.map(k=>CANDIDATOS[k].cor)); } else somConfirma();
+    if(eleito){ fanfarra(); confete(topo.map(k=>CANDIDATOS[k].cor)); }
+    else if(finalistas.length){ rufar(); setTimeout(somConfirma, 700); confete(finalistas.map(k=>CANDIDATOS[k].cor)); }
+    else somConfirma();
   };
   if(max === 0) return setTimeout(revelar, 1200);
-  $("tlSuspense").querySelector("span").textContent = empate ? "E O RESULTADO É..." : "E O GRANDE VENCEDOR É...";
+  $("tlSuspense").querySelector("span").innerHTML = "ELEITO NO 1º TURNO...<br>OU VAI TER SEGUNDO TURNO?";
   setTimeout(()=>{ if(seq !== TL.seq) return; $("tlSuspense").classList.remove("hidden"); rufar(); setTimeout(rufar, 1000); setTimeout(rufar, 2000); }, 1000);
   setTimeout(revelar, 4400);
 }
