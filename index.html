@@ -112,7 +112,10 @@ body{margin:0;background:#1d1b18;font-family:Arial,Helvetica,sans-serif;color:va
 .tl-topo{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
 .tl-titulo{font-size:clamp(22px,3.4vw,44px);font-weight:900;letter-spacing:.06em}
 .tl-aovivo{display:inline-block;background:#e0242b;color:#fff;font-size:.42em;padding:5px 10px;border-radius:4px;vertical-align:middle;margin-right:10px;animation:piscatxt 1.2s steps(1) infinite;letter-spacing:.1em}
-.tl-prog{min-width:260px;flex:1;max-width:520px;text-align:right;font-size:clamp(14px,1.5vw,20px);font-weight:bold}
+.tl-prog{min-width:220px;flex:1;max-width:460px;text-align:right;font-weight:bold}
+.tl-pct{display:flex;align-items:baseline;justify-content:flex-end;gap:10px;margin-bottom:6px}
+.tl-pct b{font-size:clamp(40px,6vw,88px);line-height:.9;font-weight:900;color:#f5d33b;font-variant-numeric:tabular-nums;text-shadow:0 0 24px rgba(245,211,59,.45)}
+.tl-pct span{font-size:clamp(13px,1.4vw,19px);opacity:.85;letter-spacing:.06em;text-transform:uppercase}
 .tl-progbar{height:14px;background:rgba(255,255,255,.15);border-radius:7px;overflow:hidden;margin-bottom:6px}
 .tl-progbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#3ad07a,#f5d33b);transition:width .4s}
 .tl-corrida{position:relative;flex:1;margin:3vh 0 2vh}
@@ -525,7 +528,7 @@ body.solta .hud{position:static;padding:18px 0 0}
   <canvas id="confete"></canvas>
   <div class="tl-topo">
     <div class="tl-titulo"><span class="tl-aovivo">● AO VIVO</span> APURAÇÃO IDV</div>
-    <div class="tl-prog"><div class="tl-progbar"><i id="tlBar"></i></div><div id="tlProgTxt">0% das urnas apuradas</div></div>
+    <div class="tl-prog"><div class="tl-pct"><b id="tlProgTxt">0%</b><span>das urnas<br>apuradas</span></div><div class="tl-progbar"><i id="tlBar"></i></div></div>
   </div>
   <div class="tl-corrida" id="tlCorrida"></div>
   <div class="tl-rodape">
@@ -1002,7 +1005,7 @@ function tlRender(k){
   });
   const N = TL.votos.length, pct = N ? Math.round(TL.i*100/N) : 100;
   $("tlBar").style.width = pct+"%";
-  $("tlProgTxt").textContent = `${pct}% das urnas apuradas · ${TL.i} de ${N} votos válidos`;
+  $("tlProgTxt").textContent = `${pct}%`;
   $("tlOutros").innerHTML = `Brancos: <b>${TL.cont.BRANCO}</b> · Nulos: <b>${TL.cont.NULO}</b>`;
   if(k && CANDIDATOS[k]){
     const el = $("tl"+k); el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump");
@@ -1027,7 +1030,7 @@ function abrirTelao(ensaio){
   TL.votos = ordemDramatica(todos.filter(v=>CANDIDATOS[v])); TL.i = 0; TL.lider = null; TL.marcos = new Set(); TL.pausado = false; TL.vel = 1;
   TL.cont = {BRANCO:0, NULO:0}; Object.keys(CANDIDATOS).forEach(k=>TL.cont[k]=0);
   $("tlCorrida").innerHTML = Object.entries(CANDIDATOS).map(([k,c])=>`<div class="tl-linha" id="tl${k}" style="--c:${c.cor}"><div class="tl-foto"><img src="${c.foto}" alt=""></div><div class="tl-info"><div class="tl-nome">${esc(c.nome)} <small>Nº ${k}</small></div><div class="tl-barra"><i></i></div></div><div class="tl-num"><b>0</b><span>0,0%</span></div></div>`).join("");
-  $("tlCapaSub").textContent = TL.ensaio ? `ENSAIO · ${TL.total} votos de teste` : TL.total ? `${TL.total} votos na urna. Quem vai levar?` : "Nenhum voto na urna ainda.";
+  $("tlCapaSub").textContent = TL.ensaio ? "ENSAIO · votos de teste" : TL.total ? "As urnas estão fechadas. Quem vai levar?" : "Nenhum voto na urna ainda.";
   $("tlEnsaio").classList.toggle("hidden", TL.ensaio);
   $("tlComecar").disabled = !TL.total;
   $("tlCapa").classList.remove("hidden"); $("tlFinal").classList.add("hidden"); $("tlGrafico").classList.add("hidden"); $("tlEtapa").classList.add("hidden"); $("tlSuspense").classList.add("hidden");
@@ -1047,7 +1050,7 @@ function tlProximo(){
   const N = TL.votos.length, falta = N - TL.i;
   if(falta <= 0) return tlFim();
   let espera = Math.max(220, 1400 - TL.i*70);
-  if(N >= 5 && falta <= 3){ espera = 2600; narrar(falta === 1 ? "🥁 ÚLTIMO VOTO..." : `🥁 Faltam só ${falta} votos...`); rufar(); }
+  if(N >= 5 && falta <= 3){ espera = 2600; narrar("🥁 Reta final da apuração..."); rufar(); }
   TL.timer = setTimeout(()=>{
     const v = TL.votos[TL.i++];
     TL.cont[v] = (TL.cont[v]||0) + 1;
@@ -1214,7 +1217,7 @@ async function tlAbertura(){
   }
   $("teBr").textContent = TL.brancos; $("teNu").textContent = TL.nulos;
   TL.cont.BRANCO = TL.brancos; TL.cont.NULO = TL.nulos; tlRender();
-  msg(TL.votos.length ? `Restam <b>${TL.votos.length}</b> votos válidos para decidir tudo...` : "Nenhum voto válido!");
+  msg(TL.votos.length ? "Agora os votos válidos decidem tudo..." : "Nenhum voto válido!");
   pulou = false; await espera(2600); if(!vivo()) return;
 
   // agora sim: a corrida
