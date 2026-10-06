@@ -105,6 +105,17 @@ body{margin:0;background:#1d1b18;font-family:Arial,Helvetica,sans-serif;color:va
 @media (max-width:760px){.placar{gap:6px}.card{padding:26px 6px 8px}.card .tag{font-size:9px}.card .cc{font-size:34px}.card .cn{font-size:13px}.card .cp{font-size:12px}}
 .codigos{border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:16px}
 .codigos h3{margin:0 0 8px;font-size:16px}
+details.codigos summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px}
+details.codigos summary::-webkit-details-marker{display:none}
+details.codigos summary::before{content:"▶";font-size:12px;transition:transform .2s}
+details.codigos[open] summary::before{transform:rotate(90deg)}
+details.codigos summary h3{margin:0}
+details.codigos[open] summary{margin-bottom:10px}
+.resumo{font-weight:normal;font-size:13px;color:var(--muted)}
+#listaCodigos{max-height:420px}
+#listaCodigos .pessoa{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+#listaCodigos .pessoa .pn{font-weight:bold;min-width:110px}
+#listaCodigos .pessoa .acoesp{margin-left:auto}
 .gerar{display:flex;gap:8px;flex-wrap:wrap}
 .gerar input{flex:1;min-width:160px;padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:var(--page);color:var(--panel-ink);font-size:15px;font-family:inherit}
 #novoCodigo{margin:10px 0 4px;font-size:15px}
@@ -225,12 +236,12 @@ body.solta .hud{position:static;padding:18px 0 0}
 <div class="apuracao hidden" id="apuracao">
   <h2>Apuração</h2>
   <div class="sub" id="apurSub">Total de votos: 0</div>
-  <div class="codigos">
-    <h3>Códigos de votação</h3>
-    <div class="gerar"><input id="nomeCodigo" placeholder="Nome da pessoa" maxlength="40"><button class="btn" id="btnGerar">Gerar código</button></div>
+  <details class="codigos">
+    <summary><h3>Códigos de votação <span id="resumoPessoas" class="resumo"></span></h3></summary>
+    <div class="gerar"><input id="nomeCodigo" placeholder="Adicionar pessoa" maxlength="40"><button class="btn" id="btnGerar">Adicionar</button></div>
     <div id="novoCodigo"></div>
     <div class="listacod" id="listaCodigos"></div>
-  </div>
+  </details>
   <div id="resultados"></div>
   <div class="codigos" style="margin-top:14px"><h3>Tentativas de fraude 🚨</h3><div class="listacod" id="listaTentativas"></div></div>
   <div class="log" id="log"></div>
@@ -564,15 +575,41 @@ function renderTentativas(){
     }).catch(()=>{});
   }
 }
+// lista fixa de eleitores + os que o admin adicionar (coleção "pessoas")
+const PESSOAS = ["Ares","Banana","Boschese","Braddock","Brunim","Coxa","Deto","Douglas","Du","Feitosa","Fel","Fizz","Flavinho","Guedao","Hugao","Jonas","Jyon","Koala","LKZ","Lely","Lipao","Loiro","Luketitas","Lume","Lya","Madrinha","Malbas","Michel","Miho","Mister","Mucega","Nicao","Ozi","Paoli","Pedrão","Roroshow","Shone","Tantanha","Tiago","Toddy","Tubaral","Tutu","Yan"];
+let pessoasExtras = {}; // id -> nome
+const chaveNome = n => n.trim().toLocaleLowerCase("pt-BR");
 function renderCodigos(){
   const usados = new Set(votosAtuais().map(v=>v.th));
-  const lista = Object.entries(codigosAdm).sort((a,b)=>b[1].t-a[1].t);
-  $("listaCodigos").innerHTML = lista.length ? lista.map(([h,c])=>`<div><b class="cod">${esc(c.codigo)}</b> · ${esc(c.nome)} · ${usados.has(h) ? '<span style="color:var(--bar)">já votou</span>' : '<span style="color:var(--muted)">ainda não votou</span>'}<button data-rmcod="${esc(h)}">apagar</button></div>`).join("") : '<div style="color:var(--muted)">Nenhum código gerado ainda.</div>';
+  const porNome = {}; // chave -> {nome, codigos:[[h,c]], extra}
+  const add = (nome, extra) => { const k = chaveNome(nome); porNome[k] = porNome[k] || {nome, codigos: [], extra: null}; if(extra) porNome[k].extra = extra; return porNome[k]; };
+  PESSOAS.forEach(n=>add(n));
+  Object.entries(pessoasExtras).forEach(([id,n])=>add(n, id));
+  Object.entries(codigosAdm).forEach(([h,c])=>add(c.nome).codigos.push([h,c]));
+  const lista = Object.values(porNome).sort((a,b)=>a.nome.localeCompare(b.nome, "pt-BR", {sensitivity:"base"}));
+  const comCodigo = lista.filter(p=>p.codigos.length).length, votaram = lista.filter(p=>p.codigos.some(([h])=>usados.has(h))).length;
+  $("resumoPessoas").textContent = `· ${lista.length} pessoas · ${comCodigo} com código · ${votaram} votaram`;
+  $("listaCodigos").innerHTML = lista.map(p=>{
+    const cods = p.codigos.map(([h,c])=>`<b class="cod">${esc(c.codigo)}</b> ${usados.has(h) ? '<span style="color:var(--bar)">já votou</span>' : '<span style="color:var(--muted)">ainda não votou</span>'}<button data-rmcod="${esc(h)}">apagar</button>`).join(" ");
+    const acoes = p.codigos.length ? "" : `<button data-gerar="${esc(p.nome)}">Gerar código</button>` + (p.extra ? `<button data-rmpessoa="${esc(p.extra)}">remover</button>` : "");
+    return `<div class="pessoa"><span class="pn">${esc(p.nome)}</span>${cods}<span class="acoesp">${acoes}</span></div>`;
+  }).join("");
 }
 function salvarCodigosLocal(){ try{ if(!db) localStorage.setItem(CKEY, JSON.stringify(codigosAdm)); }catch(e){} }
 $("btnGerar").addEventListener("click", async ()=>{
   const nome = $("nomeCodigo").value.trim();
   if(!nome){ $("nomeCodigo").focus(); return; }
+  const existe = PESSOAS.concat(Object.values(pessoasExtras)).some(n=>chaveNome(n)===chaveNome(nome));
+  if(!existe){
+    const id = "p" + Date.now().toString(36);
+    pessoasExtras[id] = nome;
+    if(db){ try{ await db.collection("pessoas").doc(id).set({nome, t: Date.now()}); }catch(e){ delete pessoasExtras[id]; $("novoCodigo").textContent = "Não consegui salvar a pessoa no banco. Tente de novo."; return; } }
+  }
+  $("nomeCodigo").value = "";
+  $("novoCodigo").innerHTML = existe ? `<b>${esc(nome)}</b> já está na lista.` : `<b>${esc(nome)}</b> adicionado(a). Clique em “Gerar código” ao lado do nome.`;
+  renderCodigos();
+});
+async function gerarCodigo(nome){
   let codigo, h;
   do{ codigo = String(crypto.getRandomValues(new Uint32Array(1))[0] % 1000000).padStart(6,"0"); h = await hashTitulo(codigo); }while(codigosAdm[h]);
   const c = {codigo, nome, t: Date.now()};
@@ -583,11 +620,19 @@ $("btnGerar").addEventListener("click", async ()=>{
       await db.collection("codigosAdm").doc(h).set(c);
     }catch(e){ $("novoCodigo").textContent = "Não consegui salvar o código no banco. Tente de novo."; delete codigosAdm[h]; renderCodigos(); return; }
   }
-  $("nomeCodigo").value = "";
   $("novoCodigo").innerHTML = `Código de <b>${esc(nome)}</b>: <span class="cod grande-cod">${codigo}</span>`;
   renderApuracao();
-});
+}
 $("listaCodigos").addEventListener("click", async e=>{
+  const g = e.target.closest("[data-gerar]");
+  if(g){ g.disabled = true; await gerarCodigo(g.dataset.gerar); return; }
+  const rp = e.target.closest("[data-rmpessoa]");
+  if(rp){
+    if(!confirmar(rp, "confirmar?")) return;
+    const id = rp.dataset.rmpessoa; delete pessoasExtras[id];
+    if(db){ try{ await db.collection("pessoas").doc(id).delete(); }catch(e){} }
+    renderCodigos(); return;
+  }
   const b = e.target.closest("[data-rmcod]"); if(!b) return;
   const h = b.dataset.rmcod, c = codigosAdm[h]; if(!c) return;
   if(!confirmar(b, "confirmar?")) return;
@@ -676,6 +721,10 @@ async function iniciar(){
     }
     db.collection("tentativas").onSnapshot(snap=>{
       dbTentativas = snap.docs.map(d=>d.data()); renderApuracao();
+    }, ()=>{});
+    db.collection("pessoas").onSnapshot(snap=>{
+      pessoasExtras = {}; snap.docs.forEach(d=>{ pessoasExtras[d.id] = d.data().nome; });
+      renderCodigos();
     }, ()=>{});
     db.collection("codigosAdm").onSnapshot(snap=>{
       codigosAdm = {}; snap.docs.forEach(d=>{ codigosAdm[d.id] = d.data(); });
