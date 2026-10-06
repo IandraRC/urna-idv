@@ -432,19 +432,11 @@ function tecla(k){
   render();
 }
 
-document.querySelectorAll("[data-k]").forEach(b => b.addEventListener("click", () => tecla(b.dataset.k)));
-document.addEventListener("keydown", e => {
-  if(e.target.closest && e.target.closest("input,textarea")) return;
-  let k = null;
-  if(/^[0-9]$/.test(e.key)) k = e.key;
-  else if(e.key === "Enter") k = "OK";
-  else if(e.key === "Backspace" || e.key === "Delete") k = "C";
-  else if(e.key.toLowerCase() === "b") k = "B";
-  if(!k) return;
-  e.preventDefault();
-  const btn = document.querySelector(`[data-k="${k}"]`);
-  if(btn){ btn.classList.add("press"); setTimeout(()=>btn.classList.remove("press"),120); }
-  tecla(k);
+// só mouse/toque: sem atalhos de teclado, e Enter/Espaço num botão focado não contam (detail 0)
+document.querySelectorAll("[data-k]").forEach(b => {
+  b.tabIndex = -1;
+  b.addEventListener("mousedown", e => e.preventDefault());
+  b.addEventListener("click", e => { if(e.detail === 0) return; tecla(b.dataset.k); });
 });
 
 // ---------- Votos: banco compartilhado (db) com cópia local de reserva ----------
