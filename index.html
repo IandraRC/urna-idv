@@ -588,12 +588,36 @@ async function mostrarZoeira(msg, travaMs){
   render();
 }
 let tentativasLocais = [], dbTentativas = null;
+// identifica o aparelho (os eleitores não fazem login, então é o que dá pra saber de quem foi a tentativa)
+const AKEY = "urna-idv-aparelho", VKEY = "urna-idv-votou-como";
+function idAparelho(){
+  let id = null;
+  try{ id = localStorage.getItem(AKEY); }catch(e){}
+  if(!id){
+    id = Math.random().toString(16).slice(2, 6).toUpperCase();
+    try{ localStorage.setItem(AKEY, id); }catch(e){}
+  }
+  return id;
+}
+function tipoAparelho(){
+  const ua = navigator.userAgent;
+  const so = /iPhone/.test(ua) ? "iPhone" : /iPad/.test(ua) ? "iPad" : /Android/.test(ua) ? "Android" :
+             /Windows/.test(ua) ? "Windows" : /Mac OS X/.test(ua) ? "Mac" : /Linux/.test(ua) ? "Linux" : "outro";
+  const nav = /SamsungBrowser/.test(ua) ? "Samsung" : /Edg\//.test(ua) ? "Edge" : /OPR\/|Opera/.test(ua) ? "Opera" :
+              /Firefox|FxiOS/.test(ua) ? "Firefox" : /Chrome|CriOS/.test(ua) ? "Chrome" : /Safari/.test(ua) ? "Safari" : "navegador";
+  return so + " · " + nav;
+}
 function registrarTentativa(tipo, codigo, nomeCodigo){
   const r = {tipo, codigo: String(codigo||"").slice(0,6), nomeCodigo: String(nomeCodigo||"").slice(0,40), t: Date.now()};
+  let votouComo = ""; try{ votouComo = localStorage.getItem(VKEY) || ""; }catch(e){}
+  const completo = Object.assign({}, r, {aparelho: idAparelho(), dispositivo: tipoAparelho(), votouComo: votouComo.slice(0,40)});
   if(db){
-    db.collection("tentativas").add(r).catch(()=>{ tentativasLocais.push(r); renderApuracao(); });
+    // se as regras do Firebase recusarem os campos novos, grava pelo menos o básico
+    db.collection("tentativas").add(completo)
+      .catch(()=>db.collection("tentativas").add(r))
+      .catch(()=>{ tentativasLocais.push(completo); renderApuracao(); });
   }
-  else { tentativasLocais.push(r); renderApuracao(); }
+  else { tentativasLocais.push(completo); renderApuracao(); }
 }
 function sortear(l){ return l[Math.floor(Math.random()*l.length)]; }
 const ZOEIRA_REPETIDO = [
@@ -706,7 +730,7 @@ function registrar(voto){
   locais.push(reg); salvarLocal();
   pendentes.push(reg);
   if(db){ gravarVoto(reg).then(()=>{ pendentes = pendentes.filter(p=>p!==reg); renderApuracao(); }).catch(()=>{}); }
-  if(!souDono){ try{ localStorage.setItem(JKEY, "1"); }catch(e){} }
+  if(!souDono){ try{ localStorage.setItem(JKEY, "1"); localStorage.setItem(VKEY, eleitor.nome || ""); }catch(e){} }
   renderApuracao();
 }
 
@@ -805,7 +829,9 @@ function renderTentativas(){
   $("listaTentativas").innerHTML = lista.length ? lista.map(r=>{
     const h = new Date(r.t).toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
     const oque = r.tipo === "reabriu" ? "abriu a urna de novo depois de já ter votado" : r.tipo === "repetido" ? `tentou votar de novo com o código de <b>${esc(r.nomeCodigo||"")}</b> (${esc(r.codigo||"")})` : `chutou o código <b>${esc(r.codigo||"")}</b>`;
-    const quem = r.uid ? `<span data-uid="${esc(r.uid)}">…</span>` : "este computador";
+    const quem = r.aparelho
+      ? (r.votouComo ? `<b>${esc(r.votouComo)}</b> (já votou) · ` : "") + `aparelho <span class="cod">#${esc(r.aparelho)}</span> (${esc(r.dispositivo||"?")})`
+      : r.uid ? `<span data-uid="${esc(r.uid)}">…</span>` : "aparelho não identificado";
     return `<div>${h} · ${quem} ${oque}</div>`;
   }).join("") : '<div style="color:var(--muted)">Nenhuma tentativa até agora.</div>';
   const uids = [...new Set(lista.map(r=>r.uid).filter(Boolean))];
