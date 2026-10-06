@@ -151,6 +151,35 @@ body{margin:0;background:#1d1b18;font-family:Arial,Helvetica,sans-serif;color:va
 .tl-final .tl-venc{font-size:clamp(40px,7vw,110px);font-weight:900;line-height:1;animation:entra 1s .4s cubic-bezier(.3,1.6,.5,1) both}
 .tl-final .tl-placarfim{margin-top:2vh;font-size:clamp(16px,2vw,26px);opacity:.9;animation:entra 1s .7s both}
 .tl-final .tl-ctrl{margin-top:4vh}
+/* abertura da apuração: fraudes, quem não votou, brancos e nulos */
+.tl-etapa{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;padding:5vh 4vw 9vh;text-align:center;
+  background:radial-gradient(ellipse at 50% -10%,#24407a 0%,#0c1530 55%,#05080f 100%)}
+.tl-etapa.fraude{background:radial-gradient(ellipse at 50% -10%,#6d1420 0%,#2a0810 55%,#0b0306 100%)}
+.te-sel{letter-spacing:.4em;font-weight:bold;opacity:.7;font-size:clamp(12px,1.4vw,18px)}
+.te-tit{font-size:clamp(30px,5.2vw,76px);font-weight:900;line-height:1.05;margin-top:1.5vh;animation:entra .8s cubic-bezier(.3,1.6,.5,1) both}
+.te-num{font-size:clamp(64px,11vw,160px);font-weight:900;line-height:1;margin-top:1vh;font-variant-numeric:tabular-nums;color:#f5d33b;text-shadow:0 0 40px rgba(245,211,59,.45)}
+.te-num.bump{animation:bump .3s}
+.te-feed{width:min(940px,100%);flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;gap:10px;margin-top:2vh;
+  -webkit-mask-image:linear-gradient(to bottom,transparent,#000 30%);mask-image:linear-gradient(to bottom,transparent,#000 30%)}
+.te-item{flex:none;background:rgba(224,36,43,.2);border:1px solid rgba(255,110,110,.45);border-left:6px solid #ff3b3b;border-radius:10px;padding:12px 18px;
+  font-size:clamp(16px,2vw,26px);text-align:left;animation:teSobe .5s cubic-bezier(.2,1.3,.4,1) both}
+.te-item small{opacity:.65;margin-right:12px;font-variant-numeric:tabular-nums}
+@keyframes teSobe{from{opacity:0;transform:translateY(60px) scale(.95)}}
+.te-chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-content:flex-start;max-width:1150px;margin-top:3vh;flex:1;min-height:0;overflow:hidden}
+.te-chip{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:8px 18px;font-size:clamp(16px,2vw,26px);font-weight:bold;
+  animation:tePop .4s cubic-bezier(.3,1.6,.5,1) both}
+@keyframes tePop{from{opacity:0;transform:scale(.3)}}
+.te-placar{display:flex;gap:4vw;margin-top:5vh;flex-wrap:wrap;justify-content:center}
+.te-card{min-width:min(38vw,340px);padding:3vh 3vw;border-radius:20px;background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.25);animation:entra .8s cubic-bezier(.3,1.6,.5,1) both}
+.te-card b{display:block;font-size:clamp(76px,12vw,180px);line-height:1;font-variant-numeric:tabular-nums}
+.te-card span{font-size:clamp(18px,2.4vw,32px);font-weight:900;letter-spacing:.14em;opacity:.85}
+.te-msg{margin-top:3vh;font-size:clamp(20px,2.8vw,40px);font-weight:900;color:#f5d33b;min-height:1.3em}
+.te-msg.entra{animation:entra .7s cubic-bezier(.3,1.6,.5,1) both}
+.te-pular{position:absolute;right:2vw;bottom:2.4vh;background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:8px 16px;font-size:15px;cursor:pointer}
+.tl-suspense{position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;text-align:center;padding:4vw;background:#03050b;
+  font-size:clamp(34px,6.5vw,100px);font-weight:900;letter-spacing:.04em;line-height:1.1}
+.tl-suspense span{animation:pulsa 1.1s ease-in-out infinite}
+@keyframes pulsa{50%{opacity:.35;transform:scale(.97)}}
 @keyframes entra{from{opacity:0;transform:scale(.4)}}
 details.codigos summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px}
 details.codigos summary::-webkit-details-marker{display:none}
@@ -484,6 +513,8 @@ body.solta .hud{position:static;padding:18px 0 0}
     <button class="tl-comecar" id="tlComecar">▶ Começar apuração</button>
     <button class="tl-ensaio" id="tlEnsaio">Ensaiar com 43 votos de teste (não salva nada)</button>
   </div>
+  <div class="tl-etapa hidden" id="tlEtapa"></div>
+  <div class="tl-suspense hidden" id="tlSuspense"><span>E O GRANDE VENCEDOR É...</span></div>
   <div class="tl-final hidden" id="tlFinal"></div>
 </div>
 
@@ -920,7 +951,7 @@ $("log").addEventListener("click", async e=>{
 });
 
 // ---------- Telão: apuração ao vivo, voto a voto ----------
-const TL = {timer:null, pausado:false, vel:1, votos:[], i:0, cont:{}, lider:null, marcos:new Set(), confete:null};
+const TL = {timer:null, pausado:false, vel:1, votos:[], i:0, cont:{}, lider:null, marcos:new Set(), confete:null, seq:0, pular:null};
 function embaralhar(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
 function rufar(){ if(!somLigado) return; for(let k=0;k<14;k++) tom(90+Math.random()*30, k*0.07, 0.05, 0.09); }
 function fanfarra(){ if(!somLigado) return; [[523,0,.18],[659,.18,.18],[784,.36,.18],[1047,.54,.6],[784,.9,.15],[1047,1.05,.9]].forEach(([f,t,d])=>{ tom(f,t,d,.07); tom(f/2,t,d,.04); }); }
@@ -941,7 +972,7 @@ function tlRender(k){
   });
   const N = TL.votos.length, pct = N ? Math.round(TL.i*100/N) : 100;
   $("tlBar").style.width = pct+"%";
-  $("tlProgTxt").textContent = `${pct}% das urnas apuradas · ${TL.i} de ${N} votos`;
+  $("tlProgTxt").textContent = `${pct}% das urnas apuradas · ${TL.i} de ${N} votos válidos`;
   $("tlOutros").innerHTML = `Brancos: <b>${TL.cont.BRANCO}</b> · Nulos: <b>${TL.cont.NULO}</b>`;
   if(k && CANDIDATOS[k]){
     const el = $("tl"+k); el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump");
@@ -955,20 +986,27 @@ function votosEnsaio(){
 }
 function abrirTelao(ensaio){
   TL.ensaio = ensaio === true;
-  TL.votos = embaralhar(TL.ensaio ? votosEnsaio() : votosAtuais().map(v=>v.voto)); TL.i = 0; TL.lider = null; TL.marcos = new Set(); TL.pausado = false; TL.vel = 1;
+  TL.seq++;
+  const todos = TL.ensaio ? votosEnsaio() : votosAtuais().map(v=>v.voto);
+  TL.total = todos.length;
+  TL.brancos = todos.filter(v=>v === "BRANCO").length;
+  TL.nulos = todos.filter(v=>v === "NULO" || !CANDIDATOS[v] && v !== "BRANCO").length;
+  TL.fraudes = TL.ensaio ? fraudesEnsaio() : (dbTentativas || []).concat(tentativasLocais).slice().sort((a,b)=>a.t-b.t);
+  TL.ausentes = TL.ensaio ? ausentesEnsaio() : quemNaoVotou();
+  TL.votos = ordemDramatica(todos.filter(v=>CANDIDATOS[v])); TL.i = 0; TL.lider = null; TL.marcos = new Set(); TL.pausado = false; TL.vel = 1;
   TL.cont = {BRANCO:0, NULO:0}; Object.keys(CANDIDATOS).forEach(k=>TL.cont[k]=0);
   $("tlCorrida").innerHTML = Object.entries(CANDIDATOS).map(([k,c])=>`<div class="tl-linha" id="tl${k}" style="--c:${c.cor}"><div class="tl-foto"><img src="${c.foto}" alt=""></div><div class="tl-info"><div class="tl-nome">${esc(c.nome)} <small>Nº ${k}</small></div><div class="tl-barra"><i></i></div></div><div class="tl-num"><b>0</b><span>0,0%</span></div></div>`).join("");
-  $("tlCapaSub").textContent = TL.ensaio ? `ENSAIO · ${TL.votos.length} votos de teste` : TL.votos.length ? `${TL.votos.length} votos na urna. Quem vai levar?` : "Nenhum voto na urna ainda.";
+  $("tlCapaSub").textContent = TL.ensaio ? `ENSAIO · ${TL.total} votos de teste` : TL.total ? `${TL.total} votos na urna. Quem vai levar?` : "Nenhum voto na urna ainda.";
   $("tlEnsaio").classList.toggle("hidden", TL.ensaio);
-  $("tlComecar").disabled = !TL.votos.length;
-  $("tlCapa").classList.remove("hidden"); $("tlFinal").classList.add("hidden");
+  $("tlComecar").disabled = !TL.total;
+  $("tlCapa").classList.remove("hidden"); $("tlFinal").classList.add("hidden"); $("tlEtapa").classList.add("hidden"); $("tlSuspense").classList.add("hidden");
   $("tlPausa").textContent = "⏸ Pausar"; $("tlVel").textContent = "⏩ 1x"; narrar("");
   $("telao").classList.remove("hidden");
   try{ document.documentElement.requestFullscreen && document.documentElement.requestFullscreen().catch(()=>{}); }catch(e){}
   requestAnimationFrame(()=>tlRender());
 }
 function fecharTelao(){
-  clearTimeout(TL.timer); TL.confete && cancelAnimationFrame(TL.confete);
+  TL.seq++; clearTimeout(TL.timer); TL.confete && cancelAnimationFrame(TL.confete);
   $("telao").classList.add("hidden");
   try{ document.fullscreenElement && document.exitFullscreen(); }catch(e){}
 }
@@ -1006,10 +1044,17 @@ function tlFim(){
     <div class="tl-venc">${max===0 ? "" : topo.map(k=>esc(CANDIDATOS[k].nome)).join(" &amp; ")}</div>
     <div class="tl-placarfim">${max===0 ? "" : `${max} votos · ${(max*100/validos).toFixed(1).replace(".",",")}% dos válidos<br>`}${placar}</div>
     <div class="tl-ctrl"><button data-tl="rever">↺ Ver de novo</button><button data-tl="fechar">✕ Fechar</button></div>`;
-  setTimeout(()=>{
+  const seq = TL.seq;
+  const revelar = ()=>{
+    if(seq !== TL.seq) return;
+    $("tlSuspense").classList.add("hidden");
     $("tlFinal").classList.remove("hidden");
     if(!empate){ fanfarra(); confete(topo.map(k=>CANDIDATOS[k].cor)); } else somConfirma();
-  }, 1200);
+  };
+  if(max === 0) return setTimeout(revelar, 1200);
+  $("tlSuspense").querySelector("span").textContent = empate ? "E O RESULTADO É..." : "E O GRANDE VENCEDOR É...";
+  setTimeout(()=>{ if(seq !== TL.seq) return; $("tlSuspense").classList.remove("hidden"); rufar(); setTimeout(rufar, 1000); setTimeout(rufar, 2000); }, 1000);
+  setTimeout(revelar, 4400);
 }
 function confete(cores){
   const cv = $("confete"), cx = cv.getContext("2d"); cv.width = innerWidth; cv.height = innerHeight;
@@ -1024,7 +1069,115 @@ function confete(cores){
 }
 $("btnTelao").addEventListener("click", ()=>abrirTelao());
 $("tlEnsaio").addEventListener("click", ()=>abrirTelao(true));
-$("tlComecar").addEventListener("click", ()=>{ $("tlCapa").classList.add("hidden"); somConfirma(); narrar("Abrindo as urnas..."); TL.timer = setTimeout(tlProximo, 1500); });
+$("tlComecar").addEventListener("click", ()=>{ $("tlCapa").classList.add("hidden"); somConfirma(); tlAbertura(); });
+
+// ordem de leitura com suspense: favorece quem está atrás, para a disputa ficar apertada e
+// virar algumas vezes; o vencedor só abre vantagem no fim. O total de cada um não muda.
+function ordemDramatica(votos){
+  const resta = {}, cont = {};
+  votos.forEach(v=>{ resta[v] = (resta[v]||0) + 1; cont[v] = 0; });
+  const out = [];
+  while(out.length < votos.length){
+    const vivos = Object.keys(resta).filter(k=>resta[k] > 0);
+    const max = Math.max(...Object.keys(cont).map(k=>cont[k]));
+    const lideres = Object.keys(cont).filter(k=>cont[k] === max).length;
+    const pesos = vivos.map(k=>resta[k] * (cont[k] < max ? 4 : lideres > 1 ? 1.5 : 0.3));
+    let x = Math.random() * pesos.reduce((a,b)=>a+b, 0), i = 0;
+    while(i < vivos.length - 1 && (x -= pesos[i]) > 0) i++;
+    const k = vivos[i]; out.push(k); resta[k]--; cont[k]++;
+  }
+  return out;
+}
+function quemNaoVotou(){
+  const usados = new Set(votosAtuais().map(v=>v.th)), votou = {}, nomes = {};
+  PESSOAS.concat(Object.values(pessoasExtras)).forEach(n=>{ nomes[chaveNome(n)] = n; });
+  Object.entries(codigosAdm).forEach(([h,c])=>{ const k = chaveNome(c.nome); nomes[k] = nomes[k] || c.nome; if(usados.has(h)) votou[k] = true; });
+  votosAtuais().forEach(v=>{ if(v.eleitor) votou[chaveNome(v.eleitor)] = true; });
+  return Object.keys(nomes).filter(k=>!votou[k]).map(k=>nomes[k]).sort((a,b)=>a.localeCompare(b, "pt-BR", {sensitivity:"base"}));
+}
+function fraudesEnsaio(){
+  const n = () => sortear(PESSOAS), t0 = Date.now() - 3600e3;
+  return Array.from({length:7}, (_, i)=>{
+    const tipo = sortear(["repetido","reabriu","chute"]), cod = String(Math.floor(100000 + Math.random()*900000));
+    return {tipo, t: t0 + i*420e3, codigo: cod, nomeCodigo: n(), votouComo: tipo === "chute" && Math.random() < .5 ? "" : n(),
+            aparelho: Math.random().toString(16).slice(2,6).toUpperCase(), dispositivo: sortear(["Android · Chrome","iPhone · Safari","Windows · Chrome"])};
+  });
+}
+function ausentesEnsaio(){ return embaralhar(PESSOAS.slice()).slice(0, 9).sort((a,b)=>a.localeCompare(b, "pt-BR")); }
+function descFraude(r){
+  const quem = r.votouComo ? `<b>${esc(r.votouComo)}</b>` : r.aparelho ? `Aparelho <b>#${esc(r.aparelho)}</b> (${esc(r.dispositivo||"?")})` : "Alguém";
+  if(r.tipo === "repetido") return `<b>${esc(r.nomeCodigo||"Alguém")}</b> tentou votar de novo`;
+  if(r.tipo === "reabriu") return `${quem} voltou na urna depois de já ter votado`;
+  return `${quem} chutou o código <b>${esc(r.codigo||"")}</b>`;
+}
+function sirene(){ if(!somLigado) return; tom(880, 0, .12, .05); tom(660, .13, .12, .05); }
+async function tlAbertura(){
+  const seq = TL.seq, et = $("tlEtapa");
+  const vivo = () => seq === TL.seq;
+  let pulou = false;
+  const espera = ms => new Promise(r=>{ const t = setTimeout(r, ms / TL.vel); TL.pular = ()=>{ clearTimeout(t); r(); }; });
+  const etapa = (cls, html) => {
+    et.className = "tl-etapa " + cls; et.innerHTML = html + '<button class="te-pular" id="tePular">Pular ⏭</button>';
+    $("tePular").onclick = ()=>{ pulou = true; TL.pular && TL.pular(); };
+  };
+  const msg = t => { const m = et.querySelector(".te-msg"); m.innerHTML = t; m.classList.remove("entra"); void m.offsetWidth; m.classList.add("entra"); };
+
+  // 1) tentativas de fraude
+  const F = TL.fraudes;
+  etapa("fraude", `<div class="te-sel">PARTE 1 DE 3</div><div class="te-tit">🚨 TENTATIVAS DE FRAUDE</div><div class="te-num" id="teNum">0</div><div class="te-feed" id="teFeed"></div><div class="te-msg"></div>`);
+  await espera(1600); if(!vivo()) return;
+  const passoF = Math.max(260, Math.min(1100, 10000 / Math.max(F.length, 1)));
+  for(let i = 0; i < F.length && !pulou; i++){
+    const r = F[i], h = new Date(r.t).toLocaleTimeString("pt-BR", {hour:"2-digit", minute:"2-digit"});
+    const d = document.createElement("div"); d.className = "te-item"; d.innerHTML = `<small>${h}</small>${descFraude(r)}`;
+    $("teFeed").appendChild(d);
+    const num = $("teNum"); num.textContent = i + 1; num.classList.remove("bump"); void num.offsetWidth; num.classList.add("bump");
+    sirene();
+    await espera(passoF); if(!vivo()) return;
+  }
+  if(!vivo()) return;
+  $("teNum").textContent = F.length;
+  msg(F.length === 0 ? "Nenhuma! Eleição limpa 😇" : F.length <= 3 ? "Uns espertinhos tentaram... 👀" : F.length <= 9 ? "A Justiça Eleitoral IDV viu tudo 🚨" : "Que vergonha, IDV 🤡");
+  pulou = false; await espera(2600); if(!vivo()) return;
+
+  // 2) quem não votou
+  const A = TL.ausentes, totalPessoas = A.length + TL.total;
+  etapa("", `<div class="te-sel">PARTE 2 DE 3</div><div class="te-tit">😴 QUEM NÃO VOTOU</div><div class="te-num" id="teNum">0</div><div class="te-chips" id="teChips"></div><div class="te-msg"></div>`);
+  await espera(1400); if(!vivo()) return;
+  const passoA = Math.max(140, Math.min(650, 7000 / Math.max(A.length, 1)));
+  for(let i = 0; i < A.length && !pulou; i++){
+    const c = document.createElement("span"); c.className = "te-chip"; c.textContent = A[i];
+    $("teChips").appendChild(c); $("teNum").textContent = i + 1;
+    if(somLigado) tom(260 + (i % 5) * 30, 0, .07, .05);
+    await espera(passoA); if(!vivo()) return;
+  }
+  if(!vivo()) return;
+  if(pulou){ $("teChips").innerHTML = A.map(n=>`<span class="te-chip">${esc(n)}</span>`).join(""); $("teNum").textContent = A.length; }
+  const abst = totalPessoas ? Math.round(A.length * 100 / totalPessoas) : 0;
+  msg(A.length === 0 ? "Todo mundo votou! Participação de 100% 🎉" : `Abstenção de ${abst}% · ${A.length === 1 ? "faltou 1 pessoa" : `faltaram ${A.length} pessoas`} 😴`);
+  pulou = false; await espera(2800); if(!vivo()) return;
+
+  // 3) brancos e nulos
+  etapa("", `<div class="te-sel">PARTE 3 DE 3</div><div class="te-tit">VOTOS QUE NÃO FORAM<br>PARA NINGUÉM</div>
+    <div class="te-placar"><div class="te-card"><b id="teBr">?</b><span>BRANCOS</span></div><div class="te-card"><b id="teNu">?</b><span>NULOS</span></div></div><div class="te-msg"></div>`);
+  rufar(); await espera(1100); if(!vivo()) return; rufar(); await espera(1100); if(!vivo()) return;
+  const passos = Math.max(TL.brancos, TL.nulos);
+  for(let i = 0; i <= passos; i++){
+    $("teBr").textContent = Math.min(i, TL.brancos); $("teNu").textContent = Math.min(i, TL.nulos);
+    if(i && somLigado) tom(500 + i*25, 0, .05, .05);
+    if(pulou) break;
+    await espera(Math.max(90, 900 / Math.max(passos, 1))); if(!vivo()) return;
+  }
+  $("teBr").textContent = TL.brancos; $("teNu").textContent = TL.nulos;
+  TL.cont.BRANCO = TL.brancos; TL.cont.NULO = TL.nulos; tlRender();
+  msg(TL.votos.length ? `Restam <b>${TL.votos.length}</b> votos válidos para decidir tudo...` : "Nenhum voto válido!");
+  pulou = false; await espera(2600); if(!vivo()) return;
+
+  // agora sim: a corrida
+  et.classList.add("hidden"); TL.pular = null;
+  narrar("Agora sim... VALENDO! 🔥"); somConfirma();
+  TL.timer = setTimeout(tlProximo, 1800);
+}
 $("tlPausa").addEventListener("click", ()=>{ TL.pausado = !TL.pausado; $("tlPausa").textContent = TL.pausado ? "▶ Continuar" : "⏸ Pausar"; if(!TL.pausado) tlProximo(); else clearTimeout(TL.timer); });
 $("tlVel").addEventListener("click", ()=>{ TL.vel = TL.vel >= 4 ? 1 : TL.vel*2; $("tlVel").textContent = `⏩ ${TL.vel}x`; });
 $("tlFechar").addEventListener("click", fecharTelao);
