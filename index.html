@@ -105,6 +105,53 @@ body{margin:0;background:#1d1b18;font-family:Arial,Helvetica,sans-serif;color:va
 @media (max-width:760px){.placar{gap:6px}.card{padding:26px 6px 8px}.card .tag{font-size:9px}.card .cc{font-size:34px}.card .cn{font-size:13px}.card .cp{font-size:12px}}
 .codigos{border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:16px}
 .codigos h3{margin:0 0 8px;font-size:16px}
+/* telão: apuração ao vivo */
+.btn-telao{width:100%;margin:2px 0 14px;padding:12px;font-size:16px;font-weight:bold;background:linear-gradient(90deg,#1f6fd1,#7b2ff7);color:#fff;border:none}
+.telao{position:fixed;inset:0;z-index:60;background:radial-gradient(ellipse at 50% -10%,#24407a 0%,#0c1530 55%,#05080f 100%);color:#fff;display:flex;flex-direction:column;padding:22px 4vw 18px;font-family:Arial,Helvetica,sans-serif;overflow:hidden}
+.telao #confete{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:3}
+.tl-topo{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.tl-titulo{font-size:clamp(22px,3.4vw,44px);font-weight:900;letter-spacing:.06em}
+.tl-aovivo{display:inline-block;background:#e0242b;color:#fff;font-size:.42em;padding:5px 10px;border-radius:4px;vertical-align:middle;margin-right:10px;animation:piscatxt 1.2s steps(1) infinite;letter-spacing:.1em}
+.tl-prog{min-width:260px;flex:1;max-width:520px;text-align:right;font-size:clamp(14px,1.5vw,20px);font-weight:bold}
+.tl-progbar{height:14px;background:rgba(255,255,255,.15);border-radius:7px;overflow:hidden;margin-bottom:6px}
+.tl-progbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#3ad07a,#f5d33b);transition:width .4s}
+.tl-corrida{position:relative;flex:1;margin:3vh 0 2vh}
+.tl-linha{position:absolute;left:0;right:0;display:grid;grid-template-columns:auto 1fr auto;gap:2vw;align-items:center;transition:transform .7s cubic-bezier(.5,0,.2,1)}
+.tl-foto{position:relative;height:100%;aspect-ratio:4/5;border-radius:10px;overflow:hidden;border:4px solid var(--c);box-shadow:0 0 0 4px rgba(255,255,255,.08)}
+.tl-foto img{width:100%;height:100%;object-fit:cover;display:block;background:#fff}
+.tl-info{min-width:0}
+.tl-nome{font-size:clamp(20px,3vw,42px);font-weight:900;letter-spacing:.05em;display:flex;align-items:baseline;gap:14px}
+.tl-nome small{font-size:.45em;opacity:.7;font-weight:bold}
+.tl-barra{height:clamp(18px,3vh,34px);background:rgba(255,255,255,.1);border-radius:999px;overflow:hidden;margin-top:8px}
+.tl-barra i{display:block;height:100%;width:0;background:var(--c);border-radius:999px;transition:width .5s cubic-bezier(.3,1.4,.5,1);box-shadow:0 0 18px var(--c)}
+.tl-num{text-align:right;font-variant-numeric:tabular-nums;min-width:4ch}
+.tl-num b{display:block;font-size:clamp(34px,5.5vw,84px);line-height:1;font-weight:900}
+.tl-num span{font-size:clamp(14px,1.6vw,22px);opacity:.8;font-weight:bold}
+.tl-linha.lider .tl-foto{box-shadow:0 0 0 4px #f5d33b,0 0 30px #f5d33b}
+.tl-linha.lider .tl-nome::after{content:"LIDERANDO";font-size:.38em;background:#f5d33b;color:#111;padding:4px 8px;border-radius:4px;letter-spacing:.08em}
+.tl-linha.bump .tl-num b{animation:bump .45s}
+@keyframes bump{30%{transform:scale(1.35);color:#f5d33b}}
+.tl-mais{position:absolute;right:8%;top:10%;font-size:clamp(28px,4vw,56px);font-weight:900;color:#f5d33b;pointer-events:none;animation:sobe 1s ease-out forwards;text-shadow:0 2px 10px rgba(0,0,0,.6)}
+@keyframes sobe{from{opacity:1;transform:translateY(0) scale(.6)}30%{transform:translateY(-10px) scale(1.2)}to{opacity:0;transform:translateY(-70px) scale(1)}}
+.tl-rodape{display:flex;align-items:center;gap:20px;flex-wrap:wrap;justify-content:space-between}
+.tl-outros{font-size:clamp(14px,1.6vw,22px);opacity:.85}
+.tl-narra{flex:1;text-align:center;font-size:clamp(18px,2.4vw,34px);font-weight:900;color:#f5d33b;min-height:1.2em}
+.tl-ctrl button{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:8px 14px;font-size:15px;cursor:pointer;margin-left:6px}
+.tl-capa,.tl-final{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:radial-gradient(ellipse at center,#1a2d5c 0%,#05080f 75%)}
+.tl-capa-sel{letter-spacing:.4em;font-weight:bold;opacity:.7;font-size:clamp(12px,1.4vw,18px)}
+.tl-capa-tit{font-size:clamp(48px,10vw,150px);font-weight:900;line-height:.95;margin:18px 0;background:linear-gradient(180deg,#fff,#9fb7ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.tl-capa-sub{font-size:clamp(16px,2vw,26px);opacity:.85;margin-bottom:30px}
+.tl-comecar{font-size:clamp(18px,2.4vw,30px);font-weight:900;padding:16px 34px;border-radius:999px;border:none;cursor:pointer;background:linear-gradient(90deg,#3ad07a,#1f9d55);color:#fff;box-shadow:0 10px 30px rgba(58,208,122,.4);animation:pulsa 1.8s ease-in-out infinite}
+.tl-comecar:disabled{opacity:.4;animation:none;cursor:default}
+.tl-ensaio{margin-top:16px;background:none;border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:999px;padding:8px 18px;font-size:14px;cursor:pointer;opacity:.75}
+@keyframes pulsa{50%{transform:scale(1.06)}}
+.tl-final .tl-eleito{font-size:clamp(26px,4vw,56px);font-weight:900;letter-spacing:.15em;color:#f5d33b;animation:entra .8s cubic-bezier(.3,1.6,.5,1) both}
+.tl-final .tl-fotos{display:flex;gap:3vw;margin:3vh 0;justify-content:center}
+.tl-final img{height:min(42vh,420px);aspect-ratio:4/5;object-fit:cover;border-radius:16px;border:6px solid #f5d33b;box-shadow:0 0 60px rgba(245,211,59,.6);animation:entra 1s .2s cubic-bezier(.3,1.6,.5,1) both;background:#fff}
+.tl-final .tl-venc{font-size:clamp(40px,7vw,110px);font-weight:900;line-height:1;animation:entra 1s .4s cubic-bezier(.3,1.6,.5,1) both}
+.tl-final .tl-placarfim{margin-top:2vh;font-size:clamp(16px,2vw,26px);opacity:.9;animation:entra 1s .7s both}
+.tl-final .tl-ctrl{margin-top:4vh}
+@keyframes entra{from{opacity:0;transform:scale(.4)}}
 details.codigos summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px}
 details.codigos summary::-webkit-details-marker{display:none}
 details.codigos summary::before{content:"▶";font-size:12px;transition:transform .2s}
@@ -250,10 +297,35 @@ body.solta .hud{position:static;padding:18px 0 0}
     <summary><h3>Tentativas de fraude 🚨 <span id="resumoTent" class="resumo"></span></h3></summary>
     <div class="listacod" id="listaTentativas"></div>
   </details>
+  <button class="btn btn-telao" id="btnTelao">🎬 Apuração ao vivo (telão)</button>
   <div id="resultados"></div>
   <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
     <button class="btn" id="btnZerar">Zerar votação</button>
   </div>
+</div>
+
+<div class="telao hidden" id="telao">
+  <canvas id="confete"></canvas>
+  <div class="tl-topo">
+    <div class="tl-titulo"><span class="tl-aovivo">● AO VIVO</span> APURAÇÃO IDV</div>
+    <div class="tl-prog"><div class="tl-progbar"><i id="tlBar"></i></div><div id="tlProgTxt">0% das urnas apuradas</div></div>
+  </div>
+  <div class="tl-corrida" id="tlCorrida"></div>
+  <div class="tl-rodape">
+    <div id="tlOutros" class="tl-outros"></div>
+    <div id="tlNarra" class="tl-narra"></div>
+    <div class="tl-ctrl">
+      <button id="tlPausa">⏸ Pausar</button><button id="tlVel">⏩ 1x</button><button id="tlFechar">✕ Fechar</button>
+    </div>
+  </div>
+  <div class="tl-capa" id="tlCapa">
+    <div class="tl-capa-sel">JUSTIÇA ELEITORAL IDV</div>
+    <div class="tl-capa-tit">APURAÇÃO<br>OFICIAL</div>
+    <div class="tl-capa-sub" id="tlCapaSub"></div>
+    <button class="tl-comecar" id="tlComecar">▶ Começar apuração</button>
+    <button class="tl-ensaio" id="tlEnsaio">Ensaiar com 43 votos de teste (não salva nada)</button>
+  </div>
+  <div class="tl-final hidden" id="tlFinal"></div>
 </div>
 
 <script>
@@ -660,6 +732,118 @@ $("log").addEventListener("click", async e=>{
   if(dbVotos) dbVotos = dbVotos.filter(x=>x.id!==v.id);
   renderApuracao();
 });
+
+// ---------- Telão: apuração ao vivo, voto a voto ----------
+const TL = {timer:null, pausado:false, vel:1, votos:[], i:0, cont:{}, lider:null, marcos:new Set(), confete:null};
+function embaralhar(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function rufar(){ if(!somLigado) return; for(let k=0;k<14;k++) tom(90+Math.random()*30, k*0.07, 0.05, 0.09); }
+function fanfarra(){ if(!somLigado) return; [[523,0,.18],[659,.18,.18],[784,.36,.18],[1047,.54,.6],[784,.9,.15],[1047,1.05,.9]].forEach(([f,t,d])=>{ tom(f,t,d,.07); tom(f/2,t,d,.04); }); }
+function narrar(t){ $("tlNarra").textContent = t; }
+function tlLayout(){
+  const ks = Object.keys(CANDIDATOS), H = $("tlCorrida").clientHeight, rh = Math.min(H/ks.length, 210);
+  const ord = ks.slice().sort((a,b)=>TL.cont[b]-TL.cont[a] || ks.indexOf(a)-ks.indexOf(b));
+  ord.forEach((k,pos)=>{ const el=$("tl"+k); el.style.height = rh*.84+"px"; el.style.transform = `translateY(${pos*rh}px)`; });
+}
+function tlRender(k){
+  const ks = Object.keys(CANDIDATOS), validos = ks.reduce((s,x)=>s+TL.cont[x],0), max = Math.max(...ks.map(x=>TL.cont[x]));
+  ks.forEach(x=>{
+    const p = validos ? TL.cont[x]*100/validos : 0;
+    $("tl"+x).querySelector(".tl-barra i").style.width = p+"%";
+    $("tl"+x).querySelector(".tl-num b").textContent = TL.cont[x];
+    $("tl"+x).querySelector(".tl-num span").textContent = p.toFixed(1).replace(".",",")+"%";
+    $("tl"+x).classList.toggle("lider", max>0 && TL.cont[x]===max && ks.filter(y=>TL.cont[y]===max).length===1);
+  });
+  const N = TL.votos.length, pct = N ? Math.round(TL.i*100/N) : 100;
+  $("tlBar").style.width = pct+"%";
+  $("tlProgTxt").textContent = `${pct}% das urnas apuradas · ${TL.i} de ${N} votos`;
+  $("tlOutros").innerHTML = `Brancos: <b>${TL.cont.BRANCO}</b> · Nulos: <b>${TL.cont.NULO}</b>`;
+  if(k && CANDIDATOS[k]){
+    const el = $("tl"+k); el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump");
+    const m = document.createElement("div"); m.className = "tl-mais"; m.textContent = "+1"; el.appendChild(m); setTimeout(()=>m.remove(), 1000);
+  }
+  tlLayout();
+}
+function votosEnsaio(){
+  const ks = Object.keys(CANDIDATOS), pesos = ks.map(()=>0.5+Math.random());
+  return Array.from({length:43}, ()=>{ const r = Math.random(); if(r<.05) return "BRANCO"; if(r<.09) return "NULO"; let x = Math.random()*pesos.reduce((a,b)=>a+b,0); for(let i=0;i<ks.length;i++){ x-=pesos[i]; if(x<=0) return ks[i]; } return ks[0]; });
+}
+function abrirTelao(ensaio){
+  TL.ensaio = ensaio === true;
+  TL.votos = embaralhar(TL.ensaio ? votosEnsaio() : votosAtuais().map(v=>v.voto)); TL.i = 0; TL.lider = null; TL.marcos = new Set(); TL.pausado = false; TL.vel = 1;
+  TL.cont = {BRANCO:0, NULO:0}; Object.keys(CANDIDATOS).forEach(k=>TL.cont[k]=0);
+  $("tlCorrida").innerHTML = Object.entries(CANDIDATOS).map(([k,c])=>`<div class="tl-linha" id="tl${k}" style="--c:${c.cor}"><div class="tl-foto"><img src="${c.foto}" alt=""></div><div class="tl-info"><div class="tl-nome">${esc(c.nome)} <small>Nº ${k}</small></div><div class="tl-barra"><i></i></div></div><div class="tl-num"><b>0</b><span>0,0%</span></div></div>`).join("");
+  $("tlCapaSub").textContent = TL.ensaio ? `ENSAIO · ${TL.votos.length} votos de teste` : TL.votos.length ? `${TL.votos.length} votos na urna. Quem vai levar?` : "Nenhum voto na urna ainda.";
+  $("tlEnsaio").classList.toggle("hidden", TL.ensaio);
+  $("tlComecar").disabled = !TL.votos.length;
+  $("tlCapa").classList.remove("hidden"); $("tlFinal").classList.add("hidden");
+  $("tlPausa").textContent = "⏸ Pausar"; $("tlVel").textContent = "⏩ 1x"; narrar("");
+  $("telao").classList.remove("hidden");
+  try{ document.documentElement.requestFullscreen && document.documentElement.requestFullscreen().catch(()=>{}); }catch(e){}
+  requestAnimationFrame(()=>tlRender());
+}
+function fecharTelao(){
+  clearTimeout(TL.timer); TL.confete && cancelAnimationFrame(TL.confete);
+  $("telao").classList.add("hidden");
+  try{ document.fullscreenElement && document.exitFullscreen(); }catch(e){}
+}
+function tlProximo(){
+  clearTimeout(TL.timer);
+  if(TL.pausado) return;
+  const N = TL.votos.length, falta = N - TL.i;
+  if(falta <= 0) return tlFim();
+  let espera = Math.max(220, 1400 - TL.i*70);
+  if(N >= 5 && falta <= 3){ espera = 2600; narrar(falta === 1 ? "🥁 ÚLTIMO VOTO..." : `🥁 Faltam só ${falta} votos...`); rufar(); }
+  TL.timer = setTimeout(()=>{
+    const v = TL.votos[TL.i++];
+    TL.cont[v] = (TL.cont[v]||0) + 1;
+    if(CANDIDATOS[v]) tom(1250, 0, 0.06, 0.06); else tom(600, 0, 0.06, 0.05);
+    tlRender(v);
+    // narração: viradas, empates e marcos
+    const ks = Object.keys(CANDIDATOS), max = Math.max(...ks.map(k=>TL.cont[k])), topo = ks.filter(k=>TL.cont[k]===max);
+    const pct = Math.round(TL.i*100/N);
+    if(topo.length === 1 && TL.lider && TL.lider !== topo[0] && TL.i < N){ narrar(`🔥 VIRADA! ${CANDIDATOS[topo[0]].nome} passa ${CANDIDATOS[TL.lider].nome}!`); tom(1600,0,.08,.06); tom(2000,.1,.12,.06); }
+    else if(topo.length > 1 && max > 0 && TL.i < N && N - TL.i > 3) narrar(`⚖️ EMPATE entre ${topo.map(k=>CANDIDATOS[k].nome).join(" e ")}!`);
+    else for(const m of [25,50,75]) if(pct >= m && !TL.marcos.has(m) && N - TL.i > 3){ TL.marcos.add(m); narrar(`${m}% apurado · ${topo.length===1 ? CANDIDATOS[topo[0]].nome+" na frente" : "disputa empatada"}`); break; }
+    if(topo.length === 1 && max > 0) TL.lider = topo[0];
+    tlProximo();
+  }, espera / TL.vel);
+}
+function tlFim(){
+  narrar("");
+  const ks = Object.keys(CANDIDATOS), max = Math.max(...ks.map(k=>TL.cont[k])), topo = ks.filter(k=>TL.cont[k]===max);
+  const validos = ks.reduce((s,k)=>s+TL.cont[k],0);
+  const placar = ks.slice().sort((a,b)=>TL.cont[b]-TL.cont[a]).map(k=>`${esc(CANDIDATOS[k].nome)} <b>${TL.cont[k]}</b>`).join(" · ") + ` · Brancos <b>${TL.cont.BRANCO}</b> · Nulos <b>${TL.cont.NULO}</b>`;
+  const empate = max === 0 || topo.length > 1;
+  $("tlFinal").innerHTML = `
+    <div class="tl-eleito">${max === 0 ? "NENHUM VOTO VÁLIDO" : empate ? "⚖️ EMPATE! ⚖️" : "🏆 ELEITO 🏆"}</div>
+    <div class="tl-fotos">${(max===0?[]:topo).map(k=>`<img src="${CANDIDATOS[k].foto}" alt="">`).join("")}</div>
+    <div class="tl-venc">${max===0 ? "" : topo.map(k=>esc(CANDIDATOS[k].nome)).join(" &amp; ")}</div>
+    <div class="tl-placarfim">${max===0 ? "" : `${max} votos · ${(max*100/validos).toFixed(1).replace(".",",")}% dos válidos<br>`}${placar}</div>
+    <div class="tl-ctrl"><button data-tl="rever">↺ Ver de novo</button><button data-tl="fechar">✕ Fechar</button></div>`;
+  setTimeout(()=>{
+    $("tlFinal").classList.remove("hidden");
+    if(!empate){ fanfarra(); confete(topo.map(k=>CANDIDATOS[k].cor)); } else somConfirma();
+  }, 1200);
+}
+function confete(cores){
+  const cv = $("confete"), cx = cv.getContext("2d"); cv.width = innerWidth; cv.height = innerHeight;
+  const pal = cores.concat(["#f5d33b","#ffffff","#3ad07a","#ff5c8a"]);
+  const ps = Array.from({length:260}, ()=>({x:Math.random()*cv.width, y:-Math.random()*cv.height, w:6+Math.random()*8, h:8+Math.random()*10, vy:2+Math.random()*4, vx:-1.5+Math.random()*3, r:Math.random()*6, vr:-.2+Math.random()*.4, c:pal[Math.floor(Math.random()*pal.length)]}));
+  const t0 = performance.now();
+  (function quadro(t){
+    cx.clearRect(0,0,cv.width,cv.height);
+    for(const p of ps){ p.x+=p.vx; p.y+=p.vy; p.r+=p.vr; if(p.y>cv.height && t-t0<5000){ p.y=-20; p.x=Math.random()*cv.width; } cx.save(); cx.translate(p.x,p.y); cx.rotate(p.r); cx.fillStyle=p.c; cx.fillRect(-p.w/2,-p.h/2,p.w,p.h); cx.restore(); }
+    if(t - t0 < 9000) TL.confete = requestAnimationFrame(quadro); else cx.clearRect(0,0,cv.width,cv.height);
+  })(t0);
+}
+$("btnTelao").addEventListener("click", ()=>abrirTelao());
+$("tlEnsaio").addEventListener("click", ()=>abrirTelao(true));
+$("tlComecar").addEventListener("click", ()=>{ $("tlCapa").classList.add("hidden"); somConfirma(); narrar("Abrindo as urnas..."); TL.timer = setTimeout(tlProximo, 1500); });
+$("tlPausa").addEventListener("click", ()=>{ TL.pausado = !TL.pausado; $("tlPausa").textContent = TL.pausado ? "▶ Continuar" : "⏸ Pausar"; if(!TL.pausado) tlProximo(); else clearTimeout(TL.timer); });
+$("tlVel").addEventListener("click", ()=>{ TL.vel = TL.vel >= 4 ? 1 : TL.vel*2; $("tlVel").textContent = `⏩ ${TL.vel}x`; });
+$("tlFechar").addEventListener("click", fecharTelao);
+$("tlFinal").addEventListener("click", e=>{ const b = e.target.closest("[data-tl]"); if(!b) return; if(b.dataset.tl === "fechar") fecharTelao(); else { TL.confete && cancelAnimationFrame(TL.confete); $("confete").getContext("2d").clearRect(0,0,innerWidth,innerHeight); abrirTelao(TL.ensaio); } });
+addEventListener("resize", ()=>{ if(!$("telao").classList.contains("hidden")) tlLayout(); });
 
 $("btnApur").addEventListener("click", ()=>{
   const ap = $("apuracao"); const abrir = ap.classList.contains("hidden");
